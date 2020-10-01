@@ -1,4 +1,4 @@
-## ?(ÅL?`)? (ÅL-`).°oO (A driving code to use PDF archive, 2020-01-27)
+## ?(ÔøΩL?`)? (ÔøΩL-`).ÔøΩoO (A driving code to use PDF archive, 2020-01-27)
 
 
 ## Call the list of PSD archive == (2020-06-21) ========================
@@ -1222,7 +1222,7 @@ demo_any_model_ranking <- function(dt_arxiv, ...) {
     tenta <- rep(NA_real_, nrow(dt_psd)) %>% set_names(obj_names) %>% bind_rows(.) %>% .[rep(1, length(dt_arxiv[['name']])), ]
     for (i in seq_along(tenta)) {
         dt <- getXYlines.(dt_psd[i, ], cook = T)[[1]]
-        tenta[i] <- dt_arxiv$'model' %>% map(~.(dt$x, dt$y))?@%>% map_dbl(~ .$'dev')
+        tenta[i] <- dt_arxiv$'model' %>% map(~.(dt$x, dt$y)) %>% map_dbl(~ .$'dev')
         cat(str_c('    i = ', i, ' (/', nrow(dt_psd), ')  finished: ', now(), '\n'))
 #       if (i %% 10 == 0) 'beepr'::beep(2)
         if (i == nrow(dt_psd)) 'beepr'::beep(3)
