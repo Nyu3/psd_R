@@ -13,7 +13,7 @@
 #  arxiv %>% filter(remark %in% 'spot') %>% demo_any_model_ranking(.)
 
 
-tb. <- function(obj1, obj2, obj3, obj4) tibble(name = obj1, model = list(obj2), para = obj3, remark = obj4)
+tb. <- function(obj1, obj2, obj3, obj4, ...) tibble(name = obj1, model = list(obj2), para = obj3, remark = obj4)
 arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Additive Weibull', addWeiF., 6, 'none'),
     tb.('Additive Weibull log-logistic', addWeiLogLogisF., 6, 'none'),
@@ -982,7 +982,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('4-parameter Kumaraswamy', kuma4F., 2, 'none'),
     tb.('4-parameter Topp-Leone Dagum', topLeoDag4F., 4, 'none')
 )
-arxiv <- 'dplyr'::mutate(arxiv, dist_No = row_number())
+arxiv <- 'dplyr'::mutate(arxiv, dist_No = 'dplyr'::row_number())
 
 
 ## Selection of PDF == (2020-06-21) ========================
