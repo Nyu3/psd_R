@@ -1,4 +1,5 @@
-## ?(´?`)? (´-`) .｡oO (A driving code to use PDF archive, 2020-01-27)
+## ?(´?`)? (´-`).｡oO (A driving code to use PDF archive, 2020-01-27)
+
 
 ## Call the list of PSD archive == (2020-06-21) ========================
 ## Ex) Call Amoroso information; arxiv %>% filter(name == 'Amoroso')
@@ -13,7 +14,7 @@
 #  arxiv %>% filter(remark %in% 'spot') %>% demo_any_model_ranking(.)
 
 
-tb. <- function(obj1, obj2, obj3, obj4, ...) tibble(name = obj1, model = list(obj2), para = obj3, remark = obj4)
+tb. <- function(obj1, obj2, obj3, obj4, ...) 'tibble'::tibble(name = obj1, model = list(obj2), para = obj3, remark = obj4)
 arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Additive Weibull', addWeiF., 6, 'none'),
     tb.('Additive Weibull log-logistic', addWeiLogLogisF., 6, 'none'),
@@ -1036,20 +1037,20 @@ getXYlines. <- function(dt, cook = T, conv = T, n = 200, ...) { # 'cook' := boos
 ## Correct a PSD label which is interpreted as date == (2020-05-21) ========================
 psdLab. <- function(dt, ...) {
     dt <- dt %>% 'dplyr'::filter(rowSums(is.na(.)) != ncol(.))
-    dt <- mutate_at(dt, '粒度', ~ gsub('月', '-', .) %>% gsub('日', '', .) %>% gsub('2001/2/3', '1/2-3', .))
-    if (map.(dt['粒度'], ~ skipMess.(ymd (.))) %>% {!anyNA(.)}) dt['粒度'] <- map.(dt['粒度'], str_sub, 6, 10)  # 2019/5/10 as chr
-    if (map.(dt['粒度'], str_detect, pattern = '月|日') %>% any(.)) dt['粒度'] <- map.(dt['粒度'], ~ gsub('月', '-', .) %>% gsub('日', '', .))
-    ten <- dt[['測定日時']] %>% {.[!is.na(.)][1]} %>% str_count(., '/|:')
-    if (type_sum(dt[['測定日時']]) != 'dttm' && nrow(dt) > 0) {
-        dt <- mutate_at(dt, '測定日時', parse_date_time2, orders = whichSize.(ref = ten, vec = 2:4, c('Ymd', 'YmdHM', 'YmdHMOS')), tz = 'Asia/Tokyo')
+    dt <- mutate_at(dt, '???x', ~ gsub('??', '-', .) %>% gsub('??', '', .) %>% gsub('2001/2/3', '1/2-3', .))
+    if (map.(dt['???x'], ~ skipMess.(ymd (.))) %>% {!anyNA(.)}) dt['???x'] <- map.(dt['???x'], str_sub, 6, 10)  # 2019/5/10 as chr
+    if (map.(dt['???x'], str_detect, pattern = '??|??') %>% any(.)) dt['???x'] <- map.(dt['???x'], ~ gsub('??', '-', .) %>% gsub('??', '', .))
+    ten <- dt[['???????']] %>% {.[!is.na(.)][1]} %>% str_count(., '/|:')
+    if (type_sum(dt[['???????']]) != 'dttm' && nrow(dt) > 0) {
+        dt <- mutate_at(dt, '???????', parse_date_time2, orders = whichSize.(ref = ten, vec = 2:4, c('Ymd', 'YmdHM', 'YmdHMOS')), tz = 'Asia/Tokyo')
     }
-    name_tenta <- c(type = '砥粒種', grade = '粒度', lot = 'ロット番号')
+    name_tenta <- c(type = '?u????', grade = '???x', lot = '???b?g???')
     dt <- rename(dt, !!name_tenta)
     return (dt)
 }
 
 ## Quasi y after best modeling from some archive == (2020-03-01) ========================
-bestYiv. <- function(dt, xAny, pdf_group = 'gold', ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
+bestYiv. <- function(dt, xAny, pdf_group = 'gold', ...) {  # PDF = f(x|??) --> arYiv. = f(??|xAny)
     if (is.na(dt) %>% all(.)) return (NA)
     def.(c('x', 'y'), list(xy.coords(dt)$'x', xy.coords(dt)$'y'))
     mdl_sel <- select_pdf.(pdf_group)
@@ -1207,8 +1208,8 @@ demo_any_model_plot <- function(...) {
 #   mdl_ranking <- order(mdl_eval, decreasing = T) %>% mdl_sel$'name'[.]  # Check out the names
     qyL <- map2(dt_arxiv$'y', dt_arxiv$'model', ~ .x(mdl = .y(x, y), x = x))
     xyL <- xyL2.(x, qyL) %>% set_names(dt_arxiv$'name')
-    save2.('二峰性_W')
-    plt.(xyL[order(mdl_eval)[1:9]], Ylims = c(0, NA), xlab = 'Particle Size (μm)', legePos = c(0.28,0.99), PDF = F, lwd = 1.5)
+    save2.('?????_W')
+    plt.(xyL[order(mdl_eval)[1:9]], Ylims = c(0, NA), xlab = 'Particle Size (??m)', legePos = c(0.28,0.99), PDF = F, lwd = 1.5)
 #    lines(xyL[[order(mdl_eval)[20]]], col = 'palegreen2', lwd = 1.5)  # The best fitting
     points(getXYlines.(dt_psd, cook = T, n = 100)[[1]], col = 'grey35', lwd = 0.8, cex = 0.5)
     dev.off()
@@ -1221,7 +1222,7 @@ demo_any_model_ranking <- function(dt_arxiv, ...) {
     tenta <- rep(NA_real_, nrow(dt_psd)) %>% set_names(obj_names) %>% bind_rows(.) %>% .[rep(1, length(dt_arxiv[['name']])), ]
     for (i in seq_along(tenta)) {
         dt <- getXYlines.(dt_psd[i, ], cook = T)[[1]]
-        tenta[i] <- dt_arxiv$'model' %>% map(~.(dt$x, dt$y))　%>% map_dbl(~ .$'dev')
+        tenta[i] <- dt_arxiv$'model' %>% map(~.(dt$x, dt$y))?@%>% map_dbl(~ .$'dev')
         cat(str_c('    i = ', i, ' (/', nrow(dt_psd), ')  finished: ', now(), '\n'))
 #       if (i %% 10 == 0) 'beepr'::beep(2)
         if (i == nrow(dt_psd)) 'beepr'::beep(3)
@@ -1263,7 +1264,7 @@ demo_compare. <- function (dt_psd, pdf_group = 'ancient', ...) {
     dL <- c(mdl_old, mdl_new) %>% set_names(c(old, new))
 
 #   save2.('Compare_Ag')
-    plt.(dL, Ylims = c (0, NA), xlab = 'Particle Size for an Alumina (μm)', add = 0)
+    plt.(dL, Ylims = c (0, NA), xlab = 'Particle Size for an Alumina (??m)', add = 0)
     polygon(c(stepX, rev(stepX)), c(stepY, rep(0, length(stepY))), border = F, col = colTr. ('grey65', 0.6))
     plt.(dL, Ylims = c (0, NA), add = 2, col = c('slateblue3', 'black'))  # darkorange2
     save.('Compare_alumina2')
@@ -1289,7 +1290,7 @@ demo_D50_mismatch <- function(...) {
     Ans <- result_fit$'ratio'
     dtMix <- tibble(x = xCom, y = Ans[1] *yBase1 +Ans[2] *yBase2)
     dL <- xyL.(psd[-1]) %>% . [c(2,1,3)] %>% c(., list(dtMix)) %>% set_names(c('Target', 'Base1', 'Base2', 'Mix'))
-    plt.(dL, Xlims = range(xCom), Ylims = c(0, NA), xlab = 'Particle Size (μm)')
+    plt.(dL, Xlims = range(xCom), Ylims = c(0, NA), xlab = 'Particle Size (??m)')
 }
 
 ## Fast vs slow for-loop for mixing ratio == (2020-02-09) ========================
