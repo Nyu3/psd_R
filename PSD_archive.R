@@ -290,7 +290,7 @@ pLL_al_be_ga_de_et_th <- list( list(al=0.1,be=1,ga=1,de=1,et=1,th=1), list(al=0.
 
 
 ## Quantile point
-## anoGenTransWeiQ. betaBurr3Q.　betaExpModWeiQ. betaGenHalfNormGeoQ. betaGumQ. expGenExtGomQ. expModWeiExtQ. frechetQ. genGomQ. gumbelQ.
+## anoGenTransWeiQ. betaBurr3Q. betaExpModWeiQ. betaGenHalfNormGeoQ. betaGumQ. expGenExtGomQ. expModWeiExtQ. frechetQ. genGomQ. gumbelQ.
 ## gumbel2Q. genExpPoiQ. genLogGamQ. gomLomQ. logGamPareQ. logPear3Q. modWeiExtQ.
 
 
