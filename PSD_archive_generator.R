@@ -1,4 +1,4 @@
-## ?(ÔøΩL?`)? (ÔøΩL-`).ÔøΩoO (A driving code to use PDF archive, 2020-01-27)
+## ?(ÅL?`)? (ÅL-`).°oO (A driving code to use PDF archive, 2020-01-27)
 
 
 ## Call the list of PSD archive == (2020-06-21) ========================
@@ -12,10 +12,11 @@
 ## 2nd trial
 #  arxiv %>% filter(para %in% 4) %>% .[127:, ] %>% demo_any_model_ranking(.)
 #  arxiv %>% filter(remark %in% 'spot') %>% demo_any_model_ranking(.)
+#  arxiv %>% filter(! remark %in% 'none') %>% demo_any_model_ranking(.)
 
 
-tb. <- function(obj1, obj2, obj3, obj4, ...) 'tibble'::tibble(name = obj1, model = list(obj2), para = obj3, remark = obj4)
-arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
+tb. <- function(obj1, obj2, obj3, obj4) tibble(name = obj1, model = list(obj2), para = obj3, remark = obj4)
+arxiv <- 'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Additive Weibull', addWeiF., 6, 'none'),
     tb.('Additive Weibull log-logistic', addWeiLogLogisF., 6, 'none'),
     tb.('Adjusted log-logistic generalized exponential', adjLogLogisGenExpF., 3, 'none'),
@@ -40,7 +41,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Beta additive Weibull', betaAddWeiF., 6, 'none'),
     tb.('Beta Birnbaum-Saunders', betaBirnSaunF., 4, 'none'),
     tb.('Beta BLZ', betaBLZF., 4, 'none'),
-    tb.('Beta Burr III', betaBurr3F., 5, 'gold'),  # *** (-2760.392)
+    tb.('Beta Burr III', betaBurr3F., 5, 'gold'),  # *** (-11.11)
     tb.('Beta Burr type X', betaBurr10F., 4, 'none'),
     tb.('Beta Burr type X with one parameter', betaBurrX1F., 3, 'none'),
     tb.('Beta Burr XII', betaBurr12F., 5, 'none'),
@@ -64,7 +65,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Beta exponentiated Mukherji-Islam', betaExpMukIsF., 4, 'none'),
     tb.('Beta exponentiated Nadarajah-Haghighi', betaExpNadaHaghiF., 5, 'none'),
     tb.('Beta exponentiated Weibull', betaExpWeiF., 5, 'none'),
-    tb.('Beta exponentiated Weibull Poisson', betaExpWeiPoiF., 6, 'silver'),  # ** (-2640.693)
+    tb.('Beta exponentiated Weibull Poisson', betaExpWeiPoiF., 6, 'platinum'),  # **** (-10.47)
     tb.('Beta extended half-normal', betaExtHalfNormF., 4, 'none'),
     tb.('Beta Fisher-Tippett', betaFishTipF., 5, 'none'),
     tb.('Beta-Fisk', betaFiskF., 4, 'none'),
@@ -103,7 +104,11 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Beta kappa', betaKappaF., 3, 'none'),
     tb.('Beta Kies', betaKiesF., 6, 'none'),
     tb.('Beta Kumaraswamy exponential', betaKumaExpF., 5, 'none'),
+    tb.('Beta Kumaraswamy-exponential', betaKumaExp2F., 5, 'test'),
+    tb.('Beta Kumaraswamy-Frechet', betaKumaFreF., 6, 'test'),
+    tb.('Beta Kumaraswamy-Lomax', betaKumaLomF., 6, 'test'),
     tb.('Beta Kumaraswamy Weibull', betaKumaWeiF., 6, 'none'),
+    tb.('Beta Kumaraswamy-Weibull', betaKumaWei2F., 6, 'test'),
     tb.('Beta Lindley', betaLinF., 3, 'none'),
     tb.('Beta Lindley geometric', betaLinGeoF., 4, 'none'),
     tb.('Beta Lindley Poisson', betaLinPoiF., 4, 'none'),
@@ -118,7 +123,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Beta Marshall-Olkin extended uniform', betaMaolExtUniF., 4, 'none'),
     tb.('Beta Marshall-Olkin Lomax', betaMaolLomF., 4, 'none'),
     tb.('Beta Marshall-Olkin normal', betaMaolNormF., 5, 'none'),
-    tb.('Beta Marshall-Olkin Weibull', betaMaolWeiF., 5, 'bi'),  # bi-modal (-2688.519)
+    tb.('Beta Marshall-Olkin Weibull', betaMaolWeiF., 5, 'silver'), # ** (-10.91) bi-modal
     tb.('Beta Maxwell', betaMaxF., 3, 'none'),
     tb.('Beta modified Weibull', betaModWeiF., 5, 'none'),
     tb.('Beta-modified weighted Rayleigh', betaModWeightRayF., 5, 'none'),
@@ -133,7 +138,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Beta odd log-logistic-Weibull', betaOddLogLogisWeiF., 5, 'none'),
     tb.('Beta P', betaPF., 3, 'none'),
     tb.('Beta Pareto', betaPareF., 4, 'none'),
-    tb.('Beta Pareto-geometric', betaPareGeoF., 5, 'stop'),
+    tb.('Beta Pareto-geometric', betaPareGeoF., 5, 'none'),
     tb.('Beta Pham', betaPhamF., 4, 'none'),
     tb.('Beta Phani', betaPhaniF., 7, 'none'),
     tb.('Beta power', betaPowF., 4, 'none'),
@@ -166,8 +171,8 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Bramwell-Holdsworth-Pinton', bhpF., 2, 'none'),
     tb.('Burr II', burr2F., 1, 'none'),
     tb.('Burr III', burr3F., 3, 'none'),
-    tb.('Burr III Marshall-Olkin Lindley', burr3MaolLinF., 4, 'none'),  # * (-2562.816)
-    tb.('Burr III Marshall-Olkin Weibull', burr3MaolWeiF., 5, 'gold'),  # *** (-2701.267)
+    tb.('Burr III Marshall-Olkin Lindley', burr3MaolLinF., 4, 'none'),
+    tb.('Burr III Marshall-Olkin Weibull', burr3MaolWeiF., 5, 'silver'),  # ** (-10.63)
     tb.('Burr VIII', burr8F., 1, 'none'),
     tb.('Burr type X', burr10F., 2, 'none'),
     tb.('Burr X exponentiated Lomax', burr10ExpLomF., 4, 'none'),
@@ -176,7 +181,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Burr X Lomax', burr10LomF., 3, 'none'),
     tb.('Burr X Nadarajah Haghighi', burr10NadaHaghiF., 3, 'none'),
     tb.('Burr XII', burr12F., 3, 'none'),
-    tb.('Burr XII Frechet', burr12FreF., 4, 'silver'),  # ** (-2655.296)
+    tb.('Burr XII Frechet', burr12FreF., 4, 'none'),
     tb.('Burr XII geometric', burr12GeoF., 3, 'none'),
     tb.('Burr XII inverse Rayleigh', burr12InvRayF., 3, 'none'),
     tb.('Burr XII negative binomial', burr12NegaBiF., 5, 'none'),
@@ -192,6 +197,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Chi', chiF., 1, 'none'),
     tb.('Chi-square', chiSqrF., 1, 'none'),
     tb.('Chi-square exponential', chiSqrExpF., 1, 'none'),
+    tb.('Complementary Chen logarithmic', compChenLogF., 3, 'none'),
     tb.('Complementary generalized transmuted Poisson-Lindley', compGenTransPoiLinF., 3, 'none'),
     tb.('Complementary generalized transmuted Poisson-Weibull', compGenTransPoiWeiF., 3, 'none'),
     tb.('Complementary geometric transmuted-Lindley', compGeoTransLinF., 3, 'none'),
@@ -220,16 +226,19 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Exponentially modified Gaussian (type 1)', expModGauss3F., 3, 'none'),
     tb.('Exponentially modified Gaussian (type 2)', expModGauss4F., 4, 'none'),
     tb.('Exponentiated additive Weibull', expAddWeiF., 5, 'none'),
-    tb.('Exponentiated Burr XII Poisson', expBurr12PoiF., 5, 'gold'),  # *** (-2750.7664)
+    tb.('Exponentiated Burr XII Poisson', expBurr12PoiF., 5, 'gold'),  # *** (-11.10)
     tb.('Exponentiated Burr XII Weibull', expBurr12WeiF., 5, 'none'),
+    tb.('Exponentiated Chen logarithmic', expChenLogF., 4, 'none'),
     tb.('Exponentiated chi-square', expChiSqrF., 2, 'none'),
     tb.('Exponentiated exponential', expExpF., 3, 'none'),
+    tb.('Exponentiated exponential logistic', expExpLogisF., 3, 'none'),
     tb.('Exponentiated exponential Poisson', expExpPoiF., 3, 'none'),
     tb.('Exponentiated exponential Rayleigh', expExpRayF., 3, 'none'),
     tb.('Exponentiated exponentiated exponential-Weibull', expExpExpWeiF., 5, 'none'),
     tb.('Exponentiated exponentiated Gompertz', expExpGomF., 4, 'none'),
     tb.('Exponentiated extended half-normal', expExtHalfNormF., 3, 'none'),
     tb.('Exponentiated Frechet', expFreF., 3, 'none'),
+    tb.('Exponentiated Frechet Poisson', expFrePoiF., 3, 'none'),
     tb.('Exponentiated gamma', expGamF., 3, 'none'),
     tb.('Exponentiated generalized Burr type X', expGenBurr10F., 4, 'none'),
     tb.('Exponentiated generalized extended exponential', expGenExtExpF., 4, 'none'),
@@ -238,6 +247,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Exponentiated generalized gamma', expGenGamF., 4, 'none'),
     tb.('Exponentiated generalized Gumbel', expGenGumF., 4, 'none'),
     tb.('Exponentiated generalized half-normal', expGenHalfNormF., 3, 'none'),
+    tb.('Exponentiated generalized inverse Weibull', expGenInvWeiF., 4, 'none'),
     tb.('Exponentiated generalized Lomax', expGenLomF., 4, 'none'),
     tb.('Exponentiated generalized Marshall-Olkin-exponential', expGenMaolExpF., 4, 'none'),
     tb.('Exponentiated generalized Marshall-Olkin-Lomax', expGenMaolLomF., 5, 'none'),
@@ -263,6 +273,9 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Exponentiated half-logistic generalized half-normal', expHalfLogisGenHalfNormF., 4, 'none'),
     tb.('Exponentiated half-logistic log-logistic', expHalfLogisLogLogisF., 4, 'none'),
     tb.('Exponentiated half-normal', expHalfNormF., 2, 'none'),
+    tb.('Exponentiated inverse exponential Poisson', expInvExpPoiF., 3, 'none'),
+    tb.('Exponentiated inverse Rayleigh Poisson', expInvRayPoiF., 3, 'none'),
+    tb.('Exponentiated inverse Weibull Poisson', expInvWeiPoiF., 4, 'none'),
     tb.('Exponentiated Kumaraswamy Dagum', expKumaDagF., 5, 'none'),
     tb.('Exponentiated Kumaraswamy exponential', expKumaExpF., 4, 'none'),
     tb.('Exponentiated Kumaraswamy Weibull', expKumaWeiF., 5, 'none'),
@@ -330,13 +343,14 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Extended Weibull-Weibull', extWeiWeiF., 5, 'none'),  # *** (-12.29)
     tb.('F', fF., 2, 'none'),
     tb.('Fatigue lifetime', fatigueF., 3, 'none'),
-    tb.('Feller-Pareto', fellPareF., 5, 'gold'),  # *** (-2710.686)
+    tb.('Feller-Pareto', fellPareF., 5, 'silver'),  # ** (-10.84)
     tb.('Fisher-Tippett', fishTipF., 3, 'none'),
     tb.('Five parameter Lindley', fiveParLinF., 5, 'none'),
     tb.('Flexible additive Weibull', flexAddWeiF., 6, 'none'),
     tb.('Flexible Weibull', flexWeiF., 2, 'none'),
     tb.('Flexible Weibull extension', flexWeiExtF., 2, 'none'),
     tb.('Frechet', frechetF., 3, 'none'),
+    tb.('Frechet Poisson', frePoiF., 2, 'none'),
     tb.('Frechet Topp-Leone Kumaraswamy', freTopLeoKumaF., 5, 'none'),
     tb.('Frechet Topp-Leone Lomax', freTopLeoLomF., 5, 'none'),
     tb.('Gamma', gamF., 2, 'none'),
@@ -344,6 +358,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Gamma Dagum', gamDagF., 5, 'none'),  # * (-2563.627)
     tb.('Gamma exponential', gamExpF., 3, 'none'),
     tb.('Gamma exponentiated exponential', gamExpExpF., 3, 'none'),
+    tb.('Gamma exponentiated exponential-Weibull', gamExpExpWeiF., 4, 'none'),
     tb.('Gamma extended Frechet', gamExtFreF., 4, 'none'),
     tb.('Gamma extreme value', gamEVF., 2, 'none'),
     tb.('Gamma generalized Pareto', gamGenPareF., 3, 'none'),
@@ -361,15 +376,21 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Gamma Pareto', gamPareF., 3, 'none'),
     tb.('Gamma Pareto IV', gamPare4F., 3, 'none'),
     tb.('Gamma Weibull', gamWeiF., 3, 'none'),
+    tb.('Gausian mixture model', gmmF., 5, 'none'),
     tb.('Generalized additive Weibull', genAddWeiF., 4, 'none'),
+    tb.('Generalized additive Weibull-Burr XII', genAddWeiBurr12F., 6, 'test'),
+    tb.('Generalized additive Weibull-Gumbel', genAddWeiGumF., 6, 'test'),
+    tb.('Generalized additive Weibull log-logistic', genAddWeiLogLogisF., 6, 'test'),
+    tb.('Generalized additive Weibull-uniform', genAddWeiUniF., 5, 'test'),
     tb.('Generalized alpha-beta skew normal', genAlpBetaSkewNormF., 5, 'none'),
     tb.('Generalized beta', genBetaF., 5, 'none'),
     tb.('Generalized beta of the second kind', genBeta2F., 4, 'none'),
-    tb.('Generalized beta prime', genBetaPrimeF., 5, 'silver'),  # *** (-2707.184)
+    tb.('Generalized beta prime', genBetaPrimeF., 5, 'classic'),  # ** (-10.79)
     tb.('Generalized Burr', genBurrF., 4, 'none'),
     tb.('Generalized Burr XII-Poisson', genBurr12PoiF., 4, 'none'),
     tb.('Generalized Dagum', genDagF., 3, 'none'),
     tb.('Generalized exponential', genExpF., 2, 'none'),
+    tb.('Generalized exponential geometric', genExpGeoF., 3, 'none'),
     tb.('Generalized exponential-Poisson', genExpPoiF., 3, 'none'),
     tb.('Generalized exponentiated additive Weibull', genExpAddWeiF., 5, 'none'),
     tb.('Generalized exponentiated Frechet', genExpFreF., 4, 'none'),
@@ -378,7 +399,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Generalized exponentiated inverse Rayleigh', genExpInvRayF., 2, 'none'),
     tb.('Generalized exponentiated inverse Weibull', genExpInvWeiF., 4, 'none'),
     tb.('Generalized extreme value', gevF., 3, 'none'),
-    tb.('Generalized Fisher-Tippett', genFishTipF., 4, 'bronze'),
+    tb.('Generalized Fisher-Tippett', genFishTipF., 4, 'classic'), # * (-8.68)
     tb.('Generalized Frechet', genFreF., 4, 'none'),
     tb.('Generalized gamma', genGamF., 3, 'none'),
     tb.('Generalized Gompertz', genGomF., 3, 'none'),
@@ -388,9 +409,12 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Generalized Gompertz-Poisson', genGomPoiF., 4, 'none'),
     tb.('Generalized Gumbel', genGumF., 3, 'none'),
     tb.('Generalized half-normal', genHalfNormF., 2, 'none'),
+    tb.('Generalized half normal-binomial', genHalfNormBiF., 4, 'none'),
     tb.('Generalized half-normal exponentiated', genHalfNormExpF., 3, 'none'),
     tb.('Generalized half-normal exponentiated geometric', genHalfNormExpGeoF., 4, 'none'),
     tb.('Generalized half-normal geometric', genHalfNormGeoF., 3, 'none'),
+    tb.('Generalized half normal-logarithmic', genHalfNormLogF., 3, 'none'),
+    tb.('Generalized half normal-Poisson', genHalfNormPoiF., 3, 'none'),
     tb.('Generalized inverse exponential', genInvExpF., 2, 'none'),
     tb.('Generalized inverse gamma', genInvGamF., 3, 'none'),
     tb.('Generalized inverse Gaussian', genInvGaussF., 3, 'none'),
@@ -402,15 +426,15 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Generalized Lindley (GL2)', genLin2F., 2, 'none'),
     tb.('Generalized linear exponential', genLineExpF., 4, 'none'),
     tb.('Generalized linear failure rate', genLineFRF., 3, 'none'),
-    tb.('Generalized log-gamma', genLogGamF., 3, 'left'),  # * (left-so-heavy)
+    tb.('Generalized log-gamma', genLogGamF., 3, 'bronze'),  # * (-3.80) left-so-heavy
     tb.('Generalized logistic', genLogisF., 3, 'none'),
-    tb.('Generalized Marshall-Olkin Kumaraswamy-exponential', genMaolKumaExpF., 5, 'gold'),  # *** (-2754.801)
+    tb.('Generalized Marshall-Olkin Kumaraswamy-exponential', genMaolKumaExpF., 5, 'platinum'),  # **** (-11.09)
     tb.('Generalized modified exponential', genModExpF., 2, 'none'),
     tb.('Generalized modified Weibull', genModWeiF., 4, 'none'),
     tb.('Generalized normal ver.1', genNorm1F., 3, 'none'),
     tb.('Generalized normal ver.2', genNorm2F., 3, 'none'),
     tb.('Generalized odd Burr III-logistic', genOddBurr3LogisF., 4, 'none'),
-    tb.('Generalized odd Burr III-Lomax', genOddBurr3LomF., 5, 'silver'),  # ** (-2631.571)
+    tb.('Generalized odd Burr III-Lomax', genOddBurr3LomF., 5, 'platinum'),  # **** (-10.84)
     tb.('Generalized odd Burr III-Weibull', genOddBurr3WeiF., 5, 'none'),
     tb.('Generalized odd generalized exponential inverse Rayleigh', genOddGenExpInvRayF., 3, 'none'),
     tb.('Generalized odd log-logistic reciprocal Rayleigh', genOddLogLogisRecRayF., 3, 'none'),
@@ -431,7 +455,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Generalized transmuted exponentiated additive Weibull', genTransExpAddWeiF., 7, 'none'),
     tb.('Generalized transmuted exponentiated modified exponential', genTransExpModExpF., 4, 'none'),
     tb.('Generalized transmuted Lindley', genTransLinF., 4, 'none'),
-    tb.('Generalized transmuted log-logistic', genTransLogLogisF., 5, 'gold'),  # *** (-2728.404)
+    tb.('Generalized transmuted log-logistic', genTransLogLogisF., 5, 'platinum'),  # **** (-11.24)
     tb.('Generalized transmuted modified exponential', genTransModExpF., 3, 'none'),
     tb.('Generalized transmuted normal', genTransNormF., 4, 'none'),
     tb.('Generalized transmuted Poisson Lindley', genTransPoiLinF., 3, 'none'),
@@ -458,7 +482,11 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Half-Cauchy', halfCauF., 2, 'none'),
     tb.('Half-exponential power', halfExpPowF., 3, 'none'),
     tb.('Half-generalized Pearson VII', halfGenPear7F., 4, 'none'),
+    tb.('Half-logistic exponential', halfLogisExpF., 1, 'none'),
+    tb.('Half-logistic generalized Weibull', halfLogisGenWeiF., 3, 'none'),
+    tb.('Half-logistic Nadarajah-Haghighi', halfLogisNadaHaghiF., 2, 'none'),
     tb.('Half logistic Poisson', halfLogisPoiF., 3, 'none'),
+    tb.('Half-logistic Weibull', halfLogisWeiF., 2, 'none'),
     tb.('Half-normal', halfNormF., 2, 'none'),
     tb.('Half-Pearson VII', halfPear7F., 3, 'none'),
     tb.('Halphen', halphenF., 4, 'none'),
@@ -470,6 +498,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Inverse chi', invChiF., 1, 'none'),
     tb.('Inverse chi-square', invChiSqrF., 1, 'none'),
     tb.('Inverse exponential', invExpF., 2, 'none'),
+    tb.('Inverse exponential Poisson', invExpPoiF., 2, 'none'),
     tb.('Inverse gamma', invGamF., 2, 'none'),
     tb.('Inverse Gaussian', invGaussF., 2, 'none'),
     tb.('Inverse half-normal', invHalfNormF., 2, 'none'),
@@ -478,12 +507,13 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Inverse Nakagami', invNakaF., 3, 'none'),
     tb.('Inverse paralogistic', invParaLogisF., 1, 'none'),
     tb.('Inverse Rayleigh', invRayF., 2, 'none'),
+    tb.('Inverse Rayleigh Poisson', invRayPoiF., 2, 'none'),
     tb.('Inverse Weibull', invWeiF., 2, 'none'),
     tb.('Inverse Weibull Poisson', invWeiPoiF., 3, 'none'),
     tb.('Inverted beta', invtBetaF., 2, 'none'),
     tb.('Inverted exponential', invtExpF., 1, 'none'),
     tb.('Johnson\'s SB', jsbF., 4, 'none'),
-    tb.('Johnson\'s SU', jsuF., 4, 'bronze'),
+    tb.('Johnson\'s SU', jsuF., 4, 'classic'),  # * (-9.95)
     tb.('K', kF., 3, 'none'),
     tb.('Kappa', kappaF., 3, 'none'),
     tb.('Kies', kiesF., 4, 'none'),
@@ -510,13 +540,14 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Kumaraswamy exponentiated Weibull', kumaExpWei2F., 4, 'none'),
     tb.('Kumaraswamy flexible Weibull extension', kumaFlexWeiExtF., 4, 'none'),
     tb.('Kumaraswamy-Frechet', kumaFreF., 4, 'none'),
+    tb.('Kumaraswamy Frechet Poisson', kumaFrePoiF., 4, 'none'),
     tb.('Kumaraswamy-Gamma', kumaGamF., 4, 'none'),
     tb.('Kumaraswamy generalized exponentiated exponential', kumaGenExpExpF., 3, 'none'),
     tb.('Kumaraswamy generalized exponentiated Gumbel type-2', kumaGenExpGum2F., 5, 'none'),
     tb.('Kumaraswamy-generalized exponentiated Pareto', kumaGenExpPareF., 3, 'none'),
     tb.('Kumaraswamy generalized gamma', kumaGenGamF., 5, 'none'),
     tb.('Kumaraswamy-generalized half-normal', kumaGenHalfNormF., 4, 'none'),
-    tb.('Kumaraswamy generalized kappa', kumaGenKappaF., 5, 'silver'),  # ** (-2678.005)
+    tb.('Kumaraswamy generalized kappa', kumaGenKappaF., 5, 'none'),
     tb.('Kumaraswamy generalized linear failure rate', kumaGenLineFRF., 4, 'none'),
     tb.('Kumaraswamy-generalized Lomax', kumaGenLomF., 2, 'none'),
     tb.('Kumaraswamy generalized Pareto', kumaGenPareF., 4, 'none'),
@@ -531,18 +562,20 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Kumaraswamy half-logistic', kumaHalfLogisF., 3, 'none'),
     tb.('Kumaraswamy half-normal', kumaHalfNormF., 3, 'none'),
     tb.('Kumaraswamy inverse exponential', kumaInvExpF., 3, 'none'),
+    tb.('Kumaraswamy inverse exponential Poisson', kumaInvExpPoiF., 4, 'none'),
     tb.('Kumaraswamy inverse Gaussian', kumaInvGauF., 4, 'none'),
     tb.('Kumaraswamy inverse Rayleigh', kumaInvRayF., 3, 'none'),
+    tb.('Kumaraswamy inverse Rayleigh Poisson', kumaInvRayPoiF., 4, 'none'),
     tb.('Kumaraswamy inverse Weibull', kumaInvWeiF., 4, 'none'),
-    tb.('Kumaraswamy inverse Weibull Poisson', kumaInvWeiPoiF., 5, 'spot'),
+    tb.('Kumaraswamy inverse Weibull Poisson', kumaInvWeiPoiF., 5, 'none'),
     tb.('Kumaraswamy Lindley', kumaLinF., 3, 'none'),
     tb.('Kumaraswamy linear failure rate', kumaLineFRF., 4, 'none'),
-    tb.('Kumaraswamy log-logistic', kumaLogLogisF., 4, 'silver'),  # ** (-2635.755)
+    tb.('Kumaraswamy log-logistic', kumaLogLogisF., 4, 'none'),
     tb.('Kumaraswamy Lomax', kumaLomF., 4, 'none'),
     tb.('Kumaraswamy Marshall-Olkin-exponential', kumaMaolExpF., 4, 'none'),
-    tb.('Kumaraswamy Marshall-Olkin-Frechet', kumaMaolFreF., 5, 'gold'),  # *** (-2721.100)
+    tb.('Kumaraswamy Marshall-Olkin-Frechet', kumaMaolFreF., 5, 'silver'),  # ** (-10.90)
     tb.('Kumaraswamy Marshall-Olkin log-logistic', kumaMaolLogLogisF., 5, 'none'),
-    tb.('Kumaraswamy Marshall-Olkin-Lomax', kumaMaolLomF., 5, 'silver'),  # ** (-2614.414)
+    tb.('Kumaraswamy Marshall-Olkin-Lomax', kumaMaolLomF., 5, 'none'),
     tb.('Kumaraswamy Marshall-Olkin-Rayleigh', kumaMaolRayF., 4, 'none'),
     tb.('Kumaraswamy Marshall-Olkin-Weibull', kumaMaolWeiF., 5, 'none'),
     tb.('Kumaraswamy-Maxwell', kumaMaxF., 3, 'none'),
@@ -555,7 +588,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Kumaraswamy odd log-logistic-normal', kumaOddLogLogisNormF., 5, 'none'),
     tb.('Kumaraswamy odd log-logistic-Weibull', kumaOddLogLogisWeiF., 5, 'none'),
     tb.('Kumaraswamy Pareto', kumaPareF., 4, 'none'),
-    tb.('Kumaraswamy Pareto IV', kumaPare4F., 5, 'silver'),  # ** (-2677.281)
+    tb.('Kumaraswamy Pareto IV', kumaPare4F., 5, 'none'),
     tb.('Kumaraswamy power', kumaPowF., 4, 'none'),
     tb.('Kumaraswamy Rayleigh', kumaRayF., 3, 'none'),
     tb.('Kumaraswamy reciprocal Weibull', kumaRecWeiF., 4, 'none'),
@@ -571,7 +604,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Kumaraswamy transmuted exponentiated Rayleigh', kumaTransExpRayF., 5, 'none'),
     tb.('Kumaraswamy transmuted exponentiated Weibull', kumaTransExpWeiF., 6, 'none'),
     tb.('Kumaraswamy transmuted linear failure rate', kumaTransLineFRF., 5, 'none'),
-    tb.('Kumaraswamy transmuted log-logistic', kumaTransLogLogisF., 5, 'silver'),  # ** (-2610.961)
+    tb.('Kumaraswamy transmuted log-logistic', kumaTransLogLogisF., 5, 'gold'),  # *** (-11.13)
     tb.('Kumaraswamy transmuted modified exponential', kumaTransModExpF., 4, 'none'),
     tb.('Kumaraswamy transmuted modified Weibull', kumaTransModWeiF., 6, 'none'),
     tb.('Kumaraswamy transmuted power', kumaTransPowF., 5, 'none'),
@@ -579,7 +612,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Kumaraswamy transmuted Weibull', kumaTransWeiF., 5, 'none'),
     tb.('Kumaraswamy Weibull', kumaWeiF., 4, 'none'),
     tb.('Kumaraswamy Weibull-Burr XII', kumaWeiBurr12F., 7, 'none'),
-    tb.('Kumaraswamy Weibull geometric', kumaWeiGeoF., 5, 'bi'),  # bi-modal (-2467.156)
+    tb.('Kumaraswamy Weibull geometric', kumaWeiGeoF., 5, 'silver'),  # ** (-10.14) bi-modal
     tb.('Kumaraswamy Weibull-quasi Lindley', kumaWeiQuaLinF., 6, 'none'),
     tb.('Kumaraswamy Weibull-uniform', kumaWeiUniF., 5, 'none'),
     tb.('Kumaraswamy Weibull-Weibull', kumaWeiWeiF., 6, 'none'),
@@ -589,7 +622,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Levy', levyF., 2, 'none'),
     tb.('Libby-Novick', libNovF., 5, 'none'),
     tb.('Libby-Novick beta normal', libNovBetaNormF., 5, 'none'),
-    tb.('Libby-Novick beta Weibull', libNovBetaWeiF., 5, 'gold'),  # ** (-2692.668)
+    tb.('Libby-Novick beta Weibull', libNovBetaWeiF., 5, 'silver'), # ** (-10.88)
     tb.('Lifetime exponential', lifeExpF., 2, 'none'),
     tb.('Lindley', lindleyF., 1, 'none'),
     tb.('Lindley geometric', linGeoF., 2, 'none'),
@@ -654,7 +687,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Marshall-Olkin generalized Weibull', maolGenWeiF., 4, 'none'),
     tb.('Marshall-Olkin kappa', maolKappaF., 4, 'none'),
     tb.('Marshall-Olkin Kumaraswamy-exponential', maolKumaExpF., 4, 'none'),
-    tb.('Marshall-Olkin Kumaraswamy-Frechet', maolKumaFreF., 5, 'silver'),  # ** (-2638.771)
+    tb.('Marshall-Olkin Kumaraswamy-Frechet', maolKumaFreF., 5, 'none'),
     tb.('Marshall-Olkin Kumaraswamy-Lomax', maolKumaLomF., 5, 'none'),
     tb.('Marshall-Olkin Kumaraswamy-Weibull', maolKumaWeiF., 5, 'none'),
     tb.('Marshall-Olkin log-logistic', maolLogLogisF., 3, 'none'),
@@ -667,7 +700,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Maxwell-Boltzmann', maxBoltzF., 1, 'none'),
     tb.('Maxwell-Juttner', maxJuttF., 1, 'none'),
     tb.('McDonald Burr-III', mcdoBurr3F., 4, 'none'),
-    tb.('McDonald Burr XII', mcdoBurr12F., 6, 'siver'),  # ** (-2687.688)
+    tb.('McDonald Burr XII', mcdoBurr12F., 6, 'silver'),  # ** (-10.84)
     tb.('McDonald-Dagum', mcdoDagF., 5, 'none'),
     tb.('McDonald exponentiated gamma', mcdoExpGamF., 4, 'none'),
     tb.('McDonald exponentiated Pareto', mcdoExpPareF., 5, 'none'),
@@ -692,13 +725,14 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Modified beta modified Weibull', modBetaModWeiF., 6, 'none'),
     tb.('Modified beta normal', modBetaNormF., 5, 'none'),
     tb.('Modified beta Rayleigh', modBetaRayF., 4, 'none'),
-    tb.('Modified beta Weibull', modBetaWeiF., 5, 'silver'),  # ** (-2693.150)
+    tb.('Modified beta Weibull', modBetaWeiF., 5, 'none'),
     tb.('Modified Burr-III', modBurr3F., 4, 'none'),
     tb.('Modified generalized linear failure rate', modGenLineFRF., 4, 'none'),
     tb.('Modified log-logistic', modLogLogisF., 3, 'none'),
     tb.('Modified PERT', modPertF., 4, 'none'),
     tb.('Modified Weibull', modWeiF., 3, 'none'),
-    tb.('Modified Weibull extension', modWeiExtF., 3, 'left'),  # * (left-decent-heavy)
+    tb.('Modified Weibull extension', modWeiExtF., 3, 'bronze'),  # * (-6.05) left-decent-heavy
+    tb.('Modified Weibull geometric', modWeiGeoF., 4, 'none'),
     tb.('Modified weighted Rayleigh', modWeightRayF., 3, 'none'),
     tb.('Moffat', moffatF., 2, 'none'),
     tb.('Moyal', moyalF., 2, 'none'),
@@ -715,6 +749,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('New exponentiated modified Weibull', newExpModWeiF., 4, 'none'),
     tb.('New exponentiated Rayleigh', newExpRayF., 2, 'none'),
     tb.('New exponentiated Weibull', newExpWeiF., 3, 'none'),
+    tb.('New lifetime', newLifeF., 4, 'none'),
     tb.('New Lindley exponential', newLinExpF., 2, 'none'),
     tb.('New modified Weibull', newModWeiF., 5, 'none'),
     tb.('New power Topp-Leone inverse Lomax', newPowTopLeoInvLomF., 3, 'none'),
@@ -729,6 +764,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Odd exponentiated half-logistic exponential', oddExpHalfLogisExpF., 3, 'none'),
     tb.('Odd generalized exponential-exponential', oddGenExpExpF., 2, 'none'),
     tb.('Odd generalized exponential-Frechet', oddGenExpFreF., 4, 'none'),
+    tb.('Odd generalized exponential Gompertz', oddGenExpGomF., 4, 'none'),
     tb.('Odd generalized exponential-Gumbel', oddGenExpGumF., 4, 'none'),
     tb.('Odd generalized exponential-inverse Lomax', oddGenExpInvLomF., 4, 'none'),
     tb.('Odd generalized exponential-normal', oddGenExpNormF., 4, 'none'),
@@ -745,13 +781,18 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Odd Lindley-Rayleigh', oddLinRayF., 2, 'none'),
     tb.('Odd Lindley-Weibull', oddLinWeiF., 3, 'none'),
     tb.('Odd log-logistic Dagum', oddLogLogisDagF., 4, 'none'),
+    tb.('Odd log-logistic exponential', oddLogLogisExpF., 2, 'none'),
     tb.('Odd log-logistic exponentiated reciprocal Weibull', oddLogLogisExpRecWeiF., 4, 'none'),
     tb.('Odd log-logistic exponentiated Weibull', oddLogLogisExpWeiF., 4, 'none'),
     tb.('Odd log-logistic Gompertz', oddLogLogisGomF., 3, 'none'),
     tb.('Odd log-logistic Lindley exponential', oddLogLogisLinExpF., 3, 'none'),
+    tb.('Odd log-logistic linear failure rate', oddLogLogisLineFRF., 3, 'none'),
     tb.('Odd log-logistic logarithmic normal', oddLogLogisLogNormF., 4, 'none'),
     tb.('Odd log-logistic logarithmic Weibull', oddLogLogisLogWeiF., 4, 'none'),
+    tb.('Odd log-logistic modified Weibull', oddLogLogisModWeiF., 4, 'none'),
     tb.('Odd log-logistic normal', oddLogLogisNormF., 3, 'none'),
+    tb.('Odd log-logistic Rayleigh', oddLogLogisRayF., 2, 'none'),
+    tb.('Odd log-logistic Weibull', oddLogLogisWeiF., 3, 'none'),
     tb.('Odd Lomax-exponential', oddLomExpF., 3, 'none'),
     tb.('Odd Lomax-Lindley', oddLomLinF., 3, 'none'),
     tb.('Odd Lomax-log-logistic', oddLomLogLogisF., 4, 'none'),
@@ -805,7 +846,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Power log-normal', powLogNormF., 3, 'none'),
     tb.('Power normal', powNormF., 3, 'none'),
     tb.('Power Topp-Leone', powTopLeoF., 2, 'none'),
-    tb.('Prentice', prenticeF., 4, 'bronze'),
+    tb.('Prentice', prenticeF., 4, 'classic'),  # * (-9.44)
     tb.('Provost type gamma Weibull', proGamWeiF., 3, 'none'),
     tb.('Pseudo Weibull', psuedoWeiF., 2, 'none'),
     tb.('Quadratic hazard rate', quadHazRateF., 3, 'none'),
@@ -833,7 +874,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Shifted Gompertz', shGomF., 3, 'none'),
     tb.('Shifted log-logistic', shLogLogisF., 3, 'none'),
     tb.('Sichel', sichelF., 5, 'none'),
-    tb.('Singh-Maddala', sinMadF., 4, 'bronze'),
+    tb.('Singh-Maddala', sinMadF., 4, 'classic'),  # ** (-10.50)
     tb.('Skew-curved-symmetric', skewCurSymF., 1, 'none'),
     tb.('Skew-generalized normal', skewGenNormF., 2, 'none'),
     tb.('Skew normal', skewNormF., 3, 'none'),
@@ -857,7 +898,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Transmuted additive Weibull', transAddWeiF., 5, 'none'),
     tb.('Transmuted complementary Poisson', transCompPoiF., 3, 'none'),
     tb.('Transmuted complementary Weibull geometric', transCompWeiGeoF., 4, 'none'),
-    tb.('Transmuted Dagum', transDagF., 4, 'silver'),  # ** (-2646.409)
+    tb.('Transmuted Dagum', transDagF., 4, 'none'),
     tb.('Transmuted exponential', transExpF., 2, 'none'),
     tb.('Transmuted exponential Lomax', transExpLomF., 4, 'none'),
     tb.('Transmuted exponentiated additive Weibull', transExpAddWeiF., 6, 'none'),
@@ -872,6 +913,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Transmuted exponentiated Weibull', transExpWeiF., 4, 'none'),
     tb.('Transmuted Frechet', transFreF., 3, 'none'),
     tb.('Transmuted generalized exponential', transGenExpF., 3, 'none'),
+    tb.('Transmuted generalized gamma', transGenGamF., 4, 'none'),
     tb.('Transmuted generalized inverse Weibull', transGenInvWeiF., 4, 'none'),
     tb.('Transmuted generalized modified Weibull', transGenModWeiF., 5, 'none'),
     tb.('Transmuted geometric Burr X', transGeoBurr10F., 4, 'none'),
@@ -879,6 +921,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Transmuted inverse exponential', transInvExpF., 2, 'none'),
     tb.('Transmuted inverse Rayleigh', transInvRayF., 2, 'none'),
     tb.('Transmuted inverse Weibull', transInvWeiF., 3, 'none'),
+    tb.('Transmuted Janardan', transJanF., 3, 'none'),
     tb.('Transmuted Lindley', transLinF., 2, 'none'),
     tb.('Transmuted Lindley geometric', transLinGeoF., 3, 'none'),
     tb.('Transmuted linear exponential', transLineExpF., 3, 'none'),
@@ -912,6 +955,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Truncated Lomax power function', truncLomPowFunF., 3, 'none'),
     tb.('Truncated Lomax uniform', truncLomUniF., 2, 'none'),
     tb.('Truncated Pareto', truncPareF., 3, 'none'),
+    tb.('Type I half logistic Gompertz', type1HalfLogisGomF., 2, 'none'),
     tb.('Type II general exponential Lindley', type2GenExpLinF., 3, 'none'),
     tb.('Type II general exponential Lomax', type2GenExpLomF., 3, 'none'),
     tb.('Type II half logistic Weibull', type2HalfLogisWeiF., 3, 'none'),
@@ -953,6 +997,7 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('Weibull Rayleigh', weiRayF., 3, 'none'),
     tb.('Weibull uniform', weiUniF., 3, 'none'),
     tb.('Weibull Weibull', weiWeiF., 4, 'none'),
+    tb.('Weighted exponential', weightExpF., 2, 'none'),
     tb.('Weighted Feller-Pareto', weightFellPareF., 6, 'none'),
     tb.('Weighted Lindley', weightLinF., 2, 'none'),
     tb.('Weighted modified Weibull', weightModWeiF., 3, 'none'),
@@ -979,17 +1024,16 @@ arxiv <-  'dplyr'::bind_rows(  # Name, Model, Parameter number and Remark
     tb.('4-parameter beta-Dagum', betaDag4F., 4, 'none'),
     tb.('4-parameter beta Gumbel', betaGum4F., 4, 'none'),
     tb.('4-parameter beta-Singh-Maddala', betaSinMad4F., 4, 'none'),
-    tb.('4-parameter kappa', kappa4F., 4, 'silver'),  # ** (-2613.108)
+    tb.('4-parameter kappa', kappa4F., 4, 'none'),
     tb.('4-parameter Kumaraswamy', kuma4F., 2, 'none'),
     tb.('4-parameter Topp-Leone Dagum', topLeoDag4F., 4, 'none')
-)
-arxiv <- 'dplyr'::mutate(arxiv, dist_No = 'dplyr'::row_number())
+) %>% mutate(dist_No = row_number())
 
 
 ## Selection of PDF == (2020-06-21) ========================
 select_pdf. <- function(pdf_group = 'spot', ...) {
     ## Confirm remarks; unique(arxiv[['remark']])
-    remark2 <- c('gold', 'silver', 'bronze', 'classic', 'bi', 'left', 'right', str_c('para', 1:8), 'test', 'spot')
+    remark2 <- c('platinum', 'gold', 'silver', 'bronze', 'classic', str_c('para', 1:8), 'test', 'spot')
     if (!any(pdf_group %in% remark2)) {
         stop('Input right name....\n\n', call. = F)
     } else {
@@ -998,7 +1042,7 @@ select_pdf. <- function(pdf_group = 'spot', ...) {
         } else if (str_detect(pdf_group, pattern = 'para')){  # Say, 'para3'
             out <- arxiv %>% filter(para == parse_number(pdf_group))
         } else if (pdf_group == 'test') {
-            out <- arxiv %>% filter(remark %in% c('gold', 'test'))
+            out <- arxiv %>% filter(remark %in% c('platinum', 'test'))
         }
     }
     return (out)
@@ -1014,18 +1058,18 @@ freq2dens. <- function(df, ...) {
 }
 
 
-## xy-coordinate of PSD curve from Microtrac data == (2020-04-27) ========================
-getXYlines. <- function(dt, cook = T, conv = T, n = 200, ...) { # 'cook' := boost data number, 'conv' := converting from freq to dens
+## xy-coordinate of PSD curve from Microtrac data == (2020-10-08) ========================
+getXYlines. <- function(d, cook = T, conv = T, n = 200, ...) {  # 'cook' := boost data number, 'conv' := converting from freq to dens
     ## x channel and y frequency of PSD data
-    Xch <- str_which(names(dt), pattern = 'class') %>% names(dt)[.] %>% parse_number(.)
-    Ypsd <- select(dt, starts_with('class'))
+    Xch <- str_which(names(d), pattern = 'class') %>% names(d)[.] %>% parse_number(.)
+    Ypsd <- select(d, starts_with('class'))
 
     ## slice y data at every row and transform PSD with interpolation
     pullRealValues <- function(rowVec) {
         if (is.na(rowVec) %>% all(.)) return (NA)
         not0 <- which(rowVec != 0)  # y signals
         sta <- first(not0) %>% {if (. == 1) 1 else . -1}  # leave two 0 on the both sides in y signals
-        end <- last (not0) %>% {if (. == ncol(Ypsd)) ncol(Ypsd) else . +1}
+        end <- last(not0) %>% {if (. == ncol(Ypsd)) ncol(Ypsd) else . +1}
         if (cook) tenta <- gamXY.(x = Xch[sta:end], y = rowVec[sta:end], boost = T, n.boost = n)  # 200 ch interpolated
         if (!cook) tenta <- tibble(x = Xch[sta:end], y = rowVec[sta:end])  # or raw data if you want
         if (conv) return (tenta %>% freq2dens.(.))
@@ -1034,33 +1078,27 @@ getXYlines. <- function(dt, cook = T, conv = T, n = 200, ...) { # 'cook' := boos
     pmap(Ypsd, ~ pullRealValues(rowVec = c(...)))  # = system.time( map(Ypsd %>% t(.) %>% as_tibble (.), ~ pullRealValues(.)) )
 }
 
-## Correct a PSD label which is interpreted as date == (2020-05-21) ========================
-psdLab. <- function(dt, ...) {
-    dt <- dt %>% 'dplyr'::filter(rowSums(is.na(.)) != ncol(.))
-    dt <- mutate_at(dt, '???x', ~ gsub('??', '-', .) %>% gsub('??', '', .) %>% gsub('2001/2/3', '1/2-3', .))
-    if (map.(dt['???x'], ~ skipMess.(ymd (.))) %>% {!anyNA(.)}) dt['???x'] <- map.(dt['???x'], str_sub, 6, 10)  # 2019/5/10 as chr
-    if (map.(dt['???x'], str_detect, pattern = '??|??') %>% any(.)) dt['???x'] <- map.(dt['???x'], ~ gsub('??', '-', .) %>% gsub('??', '', .))
-    ten <- dt[['???????']] %>% {.[!is.na(.)][1]} %>% str_count(., '/|:')
-    if (type_sum(dt[['???????']]) != 'dttm' && nrow(dt) > 0) {
-        dt <- mutate_at(dt, '???????', parse_date_time2, orders = whichSize.(ref = ten, vec = 2:4, c('Ymd', 'YmdHM', 'YmdHMOS')), tz = 'Asia/Tokyo')
-    }
-    name_tenta <- c(type = '?u????', grade = '???x', lot = '???b?g???')
-    dt <- rename(dt, !!name_tenta)
-    return (dt)
+
+## Correct a PSD label which is interpreted as date == (2020-10-08) ========================
+psdLab. <- function(d, ...) {
+    d <- mutate_at(d, 'ó±ìx', ~ gsub('åé', '-', .) %>% gsub('ì˙', '', .) %>% gsub('2001/2/3', '1/2-3', .))
+    if (map.(d['ó±ìx'], ~ skipMess.(ymd (.))) %>% {!anyNA(.)}) d['ó±ìx'] <- map.(d['ó±ìx'], str_sub, 6, 10)  # 2019/5/10 as chr
+    if (map.(d['ó±ìx'], str_detect, pattern = 'åé|ì˙') %>% any(.)) d['ó±ìx'] <- map.(d['ó±ìx'], ~ gsub('åé', '-', .) %>% gsub('ì˙', '', .))
+    d <- d %>% 'hablar'::retype() %>% rename(!!c(type = 'ìuó±éÌ', grade = 'ó±ìx', lot = 'ÉçÉbÉgî‘çÜ', time = 'ë™íËì˙éû'))
+    d <- 'tidyr'::unite(d[c('type', 'grade', 'lot')], sep = ' :: ', col = tag) %>% bind_cols(., d)
+    return (d)
 }
 
-## Quasi y after best modeling from some archive == (2020-03-01) ========================
-bestYiv. <- function(dt, xAny, pdf_group = 'gold', ...) {  # PDF = f(x|??) --> arYiv. = f(??|xAny)
+
+## Quasi y after best modeling from some archive == (2020-11-10) ========================
+bestYiv. <- function(dt, xAny, ...) {  # PDF = f(x|É∆) --> arYiv. = f(É∆|xAny)
     if (is.na(dt) %>% all(.)) return (NA)
-    def.(c('x', 'y'), list(xy.coords(dt)$'x', xy.coords(dt)$'y'))
-    mdl_sel <- select_pdf.(pdf_group)
+    def.(c('x', 'y'), list(xy.coords(dt)$x, xy.coords(dt)$y))
+    mdl_sel <- select_pdf.('platinum')
     mdl_res <- map(mdl_sel$'model', ~.(x, y))
-      mdl_best_num <- map.(mdl_res, ~ dev.(.)) %>% which.min(.)
-        mdl_best <- mdl_res[[mdl_best_num]]
-        mdl_best_yfun <- mdl_sel$'y'[[mdl_best_num]]
-    qY <- mdl_best_yfun(mdl_best, xAny)
-    qY <- case_when(is.na(qY) ~ 0, TRUE ~ qY)  # If xAny covers out of range, then return NaN; so it should be replaced 0
-    return (qY)
+    mdl_best <- map_dbl(mdl_res, ~ .$deviance) %>% which.min() %>% mdl_res[[.]]
+    qXY <- lazy_xy.(mdl_best$formula, mdl_best$model, xAny, ext = T)
+    return (qXY)
 }
 
 ## Swing for loop for mixing ratio == (2020-02-09) ========================
@@ -1208,26 +1246,26 @@ demo_any_model_plot <- function(...) {
 #   mdl_ranking <- order(mdl_eval, decreasing = T) %>% mdl_sel$'name'[.]  # Check out the names
     qyL <- map2(dt_arxiv$'y', dt_arxiv$'model', ~ .x(mdl = .y(x, y), x = x))
     xyL <- xyL2.(x, qyL) %>% set_names(dt_arxiv$'name')
-    save2.('?????_W')
-    plt.(xyL[order(mdl_eval)[1:9]], Ylims = c(0, NA), xlab = 'Particle Size (??m)', legePos = c(0.28,0.99), PDF = F, lwd = 1.5)
+    save2.('ìÒïÙê´_W')
+    plt.(xyL[order(mdl_eval)[1:9]], Ylims = c(0, NA), xlab = 'Particle Size (É m)', legePos = c(0.28,0.99), PDF = F, lwd = 1.5)
 #    lines(xyL[[order(mdl_eval)[20]]], col = 'palegreen2', lwd = 1.5)  # The best fitting
     points(getXYlines.(dt_psd, cook = T, n = 100)[[1]], col = 'grey35', lwd = 0.8, cex = 0.5)
     dev.off()
 }
 
-## Any model estimation for several data == (2020-08-13) ========================
-demo_any_model_ranking <- function(dt_arxiv, ...) {
-    dt_psd <- skipMess.(read_excel(file.path(poolDir, 'test4newPDF.xlsx'))) %>% filter(rowSums(is.na(.)) != ncol(.))
-    obj_names <- pmap_chr(dt_psd[1:2], ~ str_flatten(c(...), collapse = '::'))
-    tenta <- rep(NA_real_, nrow(dt_psd)) %>% set_names(obj_names) %>% bind_rows(.) %>% .[rep(1, length(dt_arxiv[['name']])), ]
+## Any model estimation for several data == (2020-10-31) ========================
+demo_any_model_ranking <- function(arxiv_sel, ...) {
+    psd2 <- getData.(path = '~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD/test4newPDF.xlsx')$sample
+    obj_names <- pmap_chr(psd2[1:2], ~ str_flatten(c(...), collapse = '::'))
+    tenta <- rep(NA_real_, nrow(psd2)) %>% set_names(obj_names) %>% bind_rows() %>% .[rep(1, length(arxiv_sel[['name']])), ]
     for (i in seq_along(tenta)) {
-        dt <- getXYlines.(dt_psd[i, ], cook = T)[[1]]
-        tenta[i] <- dt_arxiv$'model' %>% map(~.(dt$x, dt$y)) %>% map_dbl(~ .$'dev')
-        cat(str_c('    i = ', i, ' (/', nrow(dt_psd), ')  finished: ', now(), '\n'))
+        dt <- getXYlines.(psd2[i, ], cook = T)[[1]]
+        tenta[i] <- arxiv_sel$'model' %>% map(~.(dt$x, dt$y)) %>% map_dbl(~ .$'dev')
+        cat(str_c('    i = ', i, ' (/', nrow(psd2), ')  finished: ', now(), '\n'))
 #       if (i %% 10 == 0) 'beepr'::beep(2)
-        if (i == nrow(dt_psd)) 'beepr'::beep(3)
+        if (i == nrow(psd2)) 'beepr'::beep(3)
     }
-    res_value <- bind_cols(name = dt_arxiv$name, para = dt_arxiv$para, tenta)  # value fitting result; write.(res_value)
+    res_value <- bind_cols(name = arxiv_sel$name, para = arxiv_sel$para, tenta)  # value fitting result; write.(res_value)
 
     ## Remake tiddy data
     dt_res <- res_value %>% pivot_longer(-c(name, para), names_to = 'sample', values_to = 'dev')
@@ -1264,7 +1302,7 @@ demo_compare. <- function (dt_psd, pdf_group = 'ancient', ...) {
     dL <- c(mdl_old, mdl_new) %>% set_names(c(old, new))
 
 #   save2.('Compare_Ag')
-    plt.(dL, Ylims = c (0, NA), xlab = 'Particle Size for an Alumina (??m)', add = 0)
+    plt.(dL, Ylims = c (0, NA), xlab = 'Particle Size for an Alumina (É m)', add = 0)
     polygon(c(stepX, rev(stepX)), c(stepY, rep(0, length(stepY))), border = F, col = colTr. ('grey65', 0.6))
     plt.(dL, Ylims = c (0, NA), add = 2, col = c('slateblue3', 'black'))  # darkorange2
     save.('Compare_alumina2')
@@ -1290,7 +1328,7 @@ demo_D50_mismatch <- function(...) {
     Ans <- result_fit$'ratio'
     dtMix <- tibble(x = xCom, y = Ans[1] *yBase1 +Ans[2] *yBase2)
     dL <- xyL.(psd[-1]) %>% . [c(2,1,3)] %>% c(., list(dtMix)) %>% set_names(c('Target', 'Base1', 'Base2', 'Mix'))
-    plt.(dL, Xlims = range(xCom), Ylims = c(0, NA), xlab = 'Particle Size (??m)')
+    plt.(dL, Xlims = range(xCom), Ylims = c(0, NA), xlab = 'Particle Size (É m)')
 }
 
 ## Fast vs slow for-loop for mixing ratio == (2020-02-09) ========================
@@ -1337,4 +1375,3 @@ demo_swing4 <- function(...) {  # 'leftX', 'rightX' := local range for fitting c
     mtext('Mixing Ratio of Base1', side = 1, las = 1, line = par ('mar')[1] -1.01, cex = 0.95)
     mtext('Residual Sum of Square', side = 2, las = 3, line = par ('mar')[2] -0.95, cex = 0.95)
 }
-
