@@ -9,7 +9,8 @@
 ## https://threeplusone.com/pubs/FieldGuide.pdf
 
 query_lib.(c('minpack.lm', 'pracma'))
-library('minpack.lm', quietly = T)
+#library('minpack.lm', quietly = T)
+suppressPackageStartupMessages(suppressWarnings(suppressMessages(invisible(library('minpack.lm', quietly = T)))))
 formals(nlsLM)$control <- nls.lm.control(maxiter = 1024, nprint = 0)  # nprint = 1 denotes to show results
 
 
@@ -222,7 +223,7 @@ pLL_al <- list( list(al=0.1), list(al=1), list(al=10), list(al=-1), list(al=0.01
 ## poiOddExpHalfLogis powLogis powTopLeo quaXgam rayGeo rayLog skewGenNorm transInvExp type1HalfLogisGom xgamGeo xgamPoi life2 beta4
 ## kuma4 (kuma)
 pLL_al_be <- list( list(al=1,be=1), list(al=0.1,be=0.1), list(al=0.01,be=0.01), list(al=0.1,be=10), list(al=100,be=1), list(al=-1,be=0),
-                   list (al=-10,be=1), list(al=0,be=0) )
+                   list(al=-10,be=1), list(al=0,be=0) )
 
 ## betaBurrX1 betaExtHalfNorm betaRay burr10ExpWei burr12Geo burr12Poi compChenLog compGenTransPoiLin compGenTransPoiWei
 ## compGeoTransLin expBurr3 expFrePoi expLineFR expPowWei expUQuad extChen gamLineFR gamPare4 genInvGam genLineFR genRay gomInvExp
