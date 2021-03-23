@@ -8,10 +8,6 @@
 ## https://pdfs.semanticscholar.org/cf53/f8c9dfa71bf17649feb86af5d7d8d294b06a.pdf
 ## https://threeplusone.com/pubs/FieldGuide.pdf
 
-query_lib.(c('minpack.lm', 'pracma'))
-library('minpack.lm', quietly = T)
-formals(nlsLM)$control <- nls.lm.control(maxiter = 1024, nprint = 0)  # nprint = 1 denotes to show results
-
 
 ## Parameter archive == (2020-02-08) ================================================================================================
 ## biWeight bhp cauchy epa gumbel halfCauchy Half-normal hohlfeld hyperSecan invExp invGauss invHalfNorm invRay laha laplace levy
@@ -314,6 +310,7 @@ stcum <- function(x) 1/2 *(1 +erfc(x /sqrt(2)))  # standard cumulative distribut
 ## https://rdrr.io/cran/pracma/man/gammainc.html
 ## lower: 0-x, upper: x-Inf, regular: incgamma(lower) /gamma(x,a)
 incgamma <- function(x, a, lower_upper_regular = 1) {
+  query_lib.('pracma')
   if (lower_upper_regular != 3) {
     map_dbl(x, ~ pracma::gammainc(., a)[lower_upper_regular])
   } else {  # If you want regular inc.gamma, this method is faster
@@ -329,6 +326,7 @@ best_mdl. <- function(mL) map_dbl(mL, ~ {if (!anyNA(.)) deviance(.) else NA}) %>
 
 ## Short cut 2 == (2021-03-23) ========================
 lazy_call. <- function(x, y, pLL, f, ext = F, y1 = 0, y2 = 0, ...) {
+  query_lib.('minpack.lm')
   if (is.data.frame(x) && ncol(x) == 2) def.(c('x', 'y'), list(x[[1]], x[[2]]))
   mL <- list()
   fun_quasi <- formals(f) %>% names(.) %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')')  # args(f)
@@ -6839,7 +6837,7 @@ logWeiExtF. <- function(x, y = NULL, ext = F, ...) {
 ## https://en.wikipedia.org/wiki/Logistic_distribution
 logisticF. <- function(x, y = NULL, ext = F, ...) {  # aka Fisk; similar to Beta-logistic, Beta exponential, Central-logistic, Logistic, and Prenctice
   pLL <- pLL_nu_lam
-  f <- function(x,nu,lam) 1 /abs(lam) *exp(-(x -nu) /lam) *(1 +exp(-(x -nu) /lam)) ^(-2)  # No use 'pracma'::sech(x), RSS will get worse 
+  f <- function(x,nu,lam) 1 /abs(lam) *exp(-(x -nu) /lam) *(1 +exp(-(x -nu) /lam)) ^(-2)  # No use pracma::sech(x), RSS will get worse 
   lazy_call.(x,y,pLL,f,ext)
 }
 
