@@ -1,80 +1,78 @@
+## Ù©(Â´á—œ`)Ùˆ (Â´-`) .ï½¡oO (PSD simulator only available for the data of Microtrac MT3300EXII, 2018-12-11)
 
-## ?(L?`)? (L-`) .¡oO (PSD simulator only available for the data of Microtrac MT3300EXII, 2018-12-11)
+## Macãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°ä¾¿å®œã®ãŸã‚ã®è¨­å®š
+# '~/Desktop/tailé©åˆ/200109_ç²’åº¦èª¿æ•´_TZS_æ–°å“_MN_PERTè©•ä¾¡ãƒ†ã‚¹ãƒˆ.xls' %>% dirname(.) %>% setwd(.)
+# Lang <- c('æ—¥æœ¬èª', 'è‹±èª')[1]
+# D50 <- c('ãƒã‚¤ã‚¯ãƒ­ãƒˆãƒ©ãƒƒã‚¯æ¸¬å®šå€¤', 'ç¢ºç‡è¨ˆç®—')[1]
 
-## Excel reader for sevral sheets == (2020-02-07) ========================
+# source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive.R'), chdir = F)
+# source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
+
+
+## Excel reader for sevral sheets == (2021-02-11) ========================
 getExcel <- function(...) {
-    File <<- dir(pattern = 'xls|xlsx|—±“x’²®') %>% {.[!str_detect(., '\\$|csv|pdf')]} %>%
-             {if (length(.) > 1) {chooseOne.(., '\"–Ú“I‚ÌExcelƒtƒ@ƒCƒ‹\"')} else .}
-    ## Reading excel
-    fullPath <- file.path(getwd(), File)
-    sheN <- excel_sheets(path = fullPath)
-    dtCurve <- read_excel(fullPath, sheet = str_which(sheN, '—‘z•ª•zŒ`ó')) %>% psdLab.(.)  # For redesign, no matter what D50 is
-    dtMaster <- read_excel(fullPath, sheet = str_which(sheN, 'ƒ}ƒXƒ^[')) %>% psdLab.(.)  # The ace sample
-    dtBase1 <- read_excel(fullPath, sheet = str_which(sheN, 'ŠîŞ1|ŠîŞA')) %>% psdLab.(.)
-    dtBase2 <- read_excel(fullPath, sheet = str_which(sheN, 'ŠîŞ2|ŠîŞB')) %>% psdLab.(.)
-    dtBase3 <- read_excel(fullPath, sheet = str_which(sheN, 'ŠîŞ3|ŠîŞC')) %>% psdLab.(.)
-    dtReal <- read_excel(fullPath, sheet = str_which(sheN, 'ŒŸØ')) %>% psdLab.(.)
+    ## You cannot add sheet names as data type directly due to non-perfect reliability of them
+    dL <- getData.(filetype = 'xls|xlsx|ç²’åº¦èª¿æ•´', sheet_bind = F) %>% map(psdLab.)
+
     ## Warning shortage of the reading data
-    if (!alive(dtCurve) && !alive(dtMaster)) stop('—‘z•ª•zŒ`ó‚¨‚æ‚Ñƒ}ƒXƒ^[sheet‚Ìƒf[ƒ^”‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·D\n\n', call. = F)
-    if (!alive(dtBase1)) stop('ŠîŞ A sheet‚Ìƒf[ƒ^”‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·D\n\n', call. = F)
-    if (!alive(dtBase2)) stop('ŠîŞ B sheet‚Ìƒf[ƒ^”‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·D\n\n', call. = F)
-    if (!alive(dtBase3)) dtBase3[1, ] <- NA
-    if (!alive(dtReal)) dtReal[1, ] <- NA
-    ## Select each one for 'Base' and 'Plus' data
-    selectRow <- function(dt, tag = 'SELECTION ...') {
-        tenta <- namePull(dt)
-        out <- if (length(tenta) == 1) dt else chooseOne.(tenta, tag) %>% {which(tenta == .)} %>% dt[., ]
-        return (out)
-    }
-    ## Priority lays in dtMaster; (dtCurve > 1, dtMaster > 1) --> dtMaster wins and changes into 'dtRef'.
-    if (alive(dtCurve) && !alive(dtMaster)) {
-        dtRef <- selectRow(dtCurve, '\"ƒ^[ƒQƒbƒg•ª•z‚ğ‚Ç‚ê‚©1‚Â‘I‚ñ‚Å‰º‚³‚¢\"')
-        shift <- TRUE
-    } else if (alive(dtMaster)) {
-        dtRef <- selectRow(dtMaster, '\"ƒ^[ƒQƒbƒg•ª•z‚ğ‚Ç‚ê‚©1‚Â‘I‚ñ‚Å‰º‚³‚¢\"')
-        shift <- FALSE
-    }
-    ## Simulate or testify?
-    tenta <- 'tentative'
-    if (alive(dtReal)) tenta <- chooseOne.(c('ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“', 'ŒŸØ'), '‚Ç‚¿‚ç‚Ì”Ô†‚ğÀs‚µ‚Ü‚·‚©')
-    if (tenta == 'ƒVƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“') dtReal <- dtReal[1, ] %>% mutate_all(~ NA)  # Prepare a dead tibble whether it's dead or alive
-    if (tenta == 'ŒŸØ') {  # 'ŒŸØ' only shows one graph.
-        if (nrow(dtReal) > 1) dtReal <- selectRow(dtReal, '\"ŒŸØƒf[ƒ^‚ğ‚Ç‚ê‚©1‚Â‘I‚ñ‚Å‰º‚³‚¢\"')
-        if (nrow(dtBase1) > 1) dtBase1 <- selectRow(dtBase1, '\"ŠîŞ A ‚Í‚Ç‚ê‚Å‚µ‚å‚¤‚©\"')
-        if (nrow(dtBase2) > 1) dtBase2 <- selectRow(dtBase2, '\"ŠîŞ B ‚Í‚Ç‚ê‚Å‚µ‚å‚¤‚©\"')
-        if (nrow(dtBase3) > 1) dtBase3 <- selectRow(dtBase3, '\"ŠîŞ C ‚Í‚Ç‚ê‚Å‚µ‚å‚¤‚©\"')
-    }
-    out <- list(ref = dtRef, b1 = dtBase1, b2 = dtBase2, b3 = dtBase3, real = dtReal, shift = shift, refD50 = dtRef$'D50')
-    return (out)
-}  # END of getExcel()
+    assign_num <- whichNear.(names(dL), c('ç†æƒ³|ç†æƒ³åˆ†å¸ƒå½¢çŠ¶', 'ãƒã‚¹ã‚¿ãƒ¼|master', '1|A|a', '2|B|b', '3|C|c', 'æ¤œè¨¼|test')) %>%
+                  map.(~ .[1]) %>% set_names(., c('ideal', 'master', 'A', 'B', 'C', 'test'))
+    if (is.na(c(assign_num[1], assign_num[2])) %>% all()) stop('ç†æƒ³åˆ†å¸ƒå½¢çŠ¶ã¾ãŸã¯ãƒã‚¹ã‚¿ãƒ¼sheetã®ãƒ‡ãƒ¼ã‚¿æ•°ãŒä¸è¶³ã—ã¦ã„ã¾ã™ï¼\n\n', call. = F)
+    if (is.na(assign_num[3]) %>% all()) stop('åŸºæ A sheetã®ãƒ‡ãƒ¼ã‚¿æ•°ãŒä¸è¶³ã—ã¦ã„ã¾ã™ï¼\n\n', call. = F)
+    if (is.na(assign_num[4]) %>% all()) stop('åŸºæ B sheetã®ãƒ‡ãƒ¼ã‚¿æ•°ãŒä¸è¶³ã—ã¦ã„ã¾ã™ï¼\n\n', call. = F)
 
+    ## Assign proper names to the data
+    assign_type <- function(d, id = 'type') if (is.null(d)) NULL else d %>% mutate(data_type = id) %>% select(data_type, everything())
+    d <- list(assign_type(dL[[assign_num[1]]], 'ideal'),
+              assign_type(dL[[assign_num[2]]], 'master'),
+              assign_type(dL[[assign_num[3]]], 'A'),
+              assign_type(dL[[assign_num[4]]], 'B'),
+              assign_type(dL[[assign_num[5]]], 'C'),
+              assign_type(dL[[assign_num[6]]], 'test')) %>%
+         bind_rows()
 
-## Check existance == (2019-11-02) ========================
-alive <- function(dt, ...) {
-    if (is.data.frame(dt)) {
-        out <- {rowSums(is.na(dt)) < ncol(dt) *0.9} %>% sum.(.) %>% {. >= 1}
-    } else {  # In case of vector; it is possible when calling a list of iLcalc
-        out <- unlist(dt) %>% {!is.na(.)} %>% all(.)
+    ## Count data type
+    cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) filter(d, data_type == x) %>% nrow())
+
+    ## You must select just one (ideal / master) and (test)
+    chooseRow <- function(d, type, messText = NULL) {
+        if (cnt[type] > 1) {
+            row_target <- which(d$data_type == type)
+            d_filter <- chooseOne.(d[row_target, 'tag'], messText = messText, chr = F) %>% d[row_target, ][., ]
+            d <- bind_rows(d[-row_target, ], d_filter)
+        }
+        return (d)
     }
-    return (out)
-}
-
-
-## Get ID label == (2020-04-03) ========================
-namePull <- function(dt, ...) {
-    if (is.na(dt) %>%  all(.)) return (NULL)
-    out <- 'tidyr'::unite(dt[c('type', 'class', 'lot')], sep = ' :: ', col = ID) %>% pull(.) %>% gsub('/', '|', .)
-    return (out)
-}
+    ## Ideal / Master
+    if (cnt['ideal'] > 0 && cnt['master'] == 0) {  # When you have only ideal sheet
+        d <- chooseRow(d, 'ideal', '\"ã‚¿ãƒ¼ã‚²ãƒƒãƒˆåˆ†å¸ƒã‚’ã©ã‚Œã‹1ã¤é¸ã‚“ã§ä¸‹ã•ã„\"')
+    } else if (cnt['ideal'] >= 0 && cnt['master'] > 0) {  # When you have ideal & master sheets, the master is given the priority
+        d <- chooseRow(d, 'master', '\"ã‚¿ãƒ¼ã‚²ãƒƒãƒˆåˆ†å¸ƒã‚’ã©ã‚Œã‹1ã¤é¸ã‚“ã§ä¸‹ã•ã„\"')
+    }
+    ## Simulation / Testify
+    messages <- if (cnt['test'] > 0) chooseOne.(c('ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³', 'æ¤œè¨¼'), 'ã©ã¡ã‚‰ã®ç•ªå·ã‚’å®Ÿè¡Œã—ã¾ã™ã‹', chr = T) else 'ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³'
+    if (messages == 'ã‚·ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³') {
+        row_test <- which(d$data_type == 'test')
+        if (length(row_test) > 0) d <- d[-row_test, ]
+    }
+    if (messages == 'æ¤œè¨¼') {  # In this case only one graph will be shown
+        d <- chooseRow(d, 'test', '\"æ¤œè¨¼ãƒ‡ãƒ¼ã‚¿ã‚’ã©ã‚Œã‹1ã¤é¸ã‚“ã§ä¸‹ã•ã„\"') %>%
+             chooseRow(., 'A', '\"åŸºæ A ã¯ã©ã‚Œã§ã—ã‚‡ã†ã‹\"') %>%
+             chooseRow(., 'B', '\"åŸºæ B ã¯ã©ã‚Œã§ã—ã‚‡ã†ã‹\"') %>%
+             chooseRow(., 'C', '\"åŸºæ C ã¯ã©ã‚Œã§ã—ã‚‡ã†ã‹\"')
+    }
+    return (d)
+  # out <- list(ref = dtRef, b1 = dtBase1, b2 = dtBase2, b3 = dtBase3, real = dtReal, shift = shift, refD50 = dtRef$'D50')
+}  # Summarise the several sheets into one, keeping the data style (one row : one info of a lot)
 
 
 ## Interactive input for the target D50 for dtRef to slide == (2019-07-24) ========================
-chooseD50 <- function(dt, microtracD50, use.D50, ...) {  # df denots your ideal curve; dtRef
+chooseD50 <- function(dt, microtracD50, use.D50, ...) {  # dt denotes your ideal curve; dtRef
     minP <- min.(dt[[1]])
     quasiD50 <- which.max.(dt[[2]]) %>% dt[., 1]  # quasiD50 := peak in the probability function curve
     D50 <- ifelse(use.D50, microtracD50, quasiD50)
     repeat {
-        num <- readline('\n   What\'s your target D50?  \n\n >>>  ')
+        num <- readline('\n   What\'s your target D50?  \n\n   >>>  ')
         if (zenk.(num) %>% {skipMess.(as.numeric(.))} %>% {!is.na(.)}) {
             num <- zenk.(num) %>% as.numeric(num)
             minShift <- minP -(D50 -num)
@@ -82,15 +80,24 @@ chooseD50 <- function(dt, microtracD50, use.D50, ...) {  # df denots your ideal 
             if (num >= 0 && minShift >= 0) break  # This if () restricts minus D50
         }
     }
-    cat(str_c('\n', str_dup('=', times = 75), '\n\n'))
+    cat(str_c('\n', str_dup('=', times = 38), '\n\n'))
     return (num -D50)
 }
 
 
+## Get ID label == (2019-05-01) ========================
+namePull <- function(dt, ... ) {
+    if (is.na(dt) %>% all()) return (NULL)
+    if (map.(dt['ç²’åº¦'], ~ skipMess.(ymd(.))) %>% {!anyNA(.)}) dt['ç²’åº¦'] <- map.(dt['ç²’åº¦'], str_sub, 6, 10)  # 2019/5/10 as chr
+    if (map.(dt['ç²’åº¦'], str_detect, pattern = 'æœˆ|æ—¥') %>% any()) dt['ç²’åº¦'] <- map.(dt['ç²’åº¦'], ~ gsub('æœˆ', '-', .) %>% gsub('æ—¥', '', .))  # 5æœˆ10æ—¥
+    'tidyr'::unite(dt[c('ç ¥ç²’ç¨®', 'ç²’åº¦', 'ãƒ­ãƒƒãƒˆç•ªå·')], sep = ' :: ', col = ID) %>% pull() %>% gsub('/', '|', .) %>% return (.)
+}
+
+
 ## Predictor == (2020-06-26) ========================
-tunePSD <- function(...) {
-    eng <- ifelse(Lang == '‰pŒê', TRUE, FALSE)
-    use.D50 <- ifelse(D50 == 'ƒ}ƒCƒNƒƒgƒ‰ƒbƒN‘ª’è’l', TRUE, FALSE)
+tunePSD <- function(measured_or_peak, ...) {
+
+    use.D50 <- ifelse(D50 == 'ãƒã‚¤ã‚¯ãƒ­ãƒˆãƒ©ãƒƒã‚¯æ¸¬å®šå€¤', TRUE, FALSE)
     ## First preparation
     dexL <- getExcel()  # list data; Ref = 1, Base1 >= 1, Base2 >= 1, Base3 >= 0, Real >= 0
     def.(c('dt0', 'dt1', 'dt2', 'dt3', 'dt4'), list(dexL$'ref', dexL$'b1', dexL$'b2', dexL$'b3', dexL$'real'))
@@ -99,61 +106,71 @@ tunePSD <- function(...) {
         dtRef[1] <- dtRef[1] +chooseD50(dtRef, microtracD50 = dexL$'refD50', use.D50)
     }
     xRef <- dtRef[[1]]
+
     ## Making directory
     oldDir <- getwd()
     newDir <- str_c(oldDir, '/#Graphs')
     if (!file.exists(newDir)) dir.create('#Graphs')
     setwd(newDir)
+
     ## Create graph name
-    fn <- str_split(File, '\\.')[[1]][1] %>% gsub('/|:|<|>|"|\\?|\\*|\\|', '_', .) %>%
-          ifelse(Sys.getenv('OS') == '', ., iconv(., 'utf-8', 'cp932')) %>% gsub('—±“x’²®_', '', .)
-    time_stamp <- str_sub(fn, 1, 6) %>% {skipMess.(parse_number(.))} %>% {if (is.na(.)) today2.() else .} %>% str_c (., '_')
+    fn0 <- str_split(File, '\\.')[[1]][1] %>% gsub('/|:|<|>|"|\\?|\\*|\\|', '_', .)
+    fn  <- if (Sys.info()['sysname'] == 'windows' && stringi::stri_enc_detect(fn0)[[1]][1,1] %in% c('ASCII', 'Shift_JIS')) {
+               iconv(fn0, 'utf8', 'cp932')  # ifelse(Sys.getenv('OS') == '', ., iconv(., 'utf8', 'cp932')) %>% gsub('ç²’åº¦èª¿æ•´_', '', .)
+           } else {
+               fn0
+           } %>% gsub('ç²’åº¦èª¿æ•´_', '', .)
+    time_stamp <- str_sub(fn, 1, 6) %>% {skipMess.(parse_number(.))} %>% {if (is.na(.)) today2.() else .} %>% str_c(., '_')
     tag <- function(dt) if (!alive(dt)) NULL else str_c('_', dt$'lot')
     grN <- if (!alive(dtReal)) str_c(time_stamp, 'simulate') else str_c(time_stamp, 'verify', tag(dt1), tag(dt2), tag(dt3))
     save2.(grN)
+
     ## Start it up
-    rec <- rep(NA_character_, 15) %>%  # Vacant tibble for i to sum up 'recs' record
-           set_names(c('ŒvZ“ú', map.(c('“u—±í', '—±“x', 'ƒƒbƒg”Ô†', '”z‡—¦'), ~ str_c(., c('A', 'B', 'C'))), 'D50Œë·—¦', '‰E‹È•”–ÊÏ‚ÌŒë·—¦')) %>%
-           bind_rows(.) %>% mutate_at(1, ~ as_datetime(., tz = 'Asia/Tokyo')) %>% mutate_at(11:15, ~ as.numeric(.))
+    rec <- rep(NA_character_, 15) %>%  # Vacant tibble to sum up 'recs' recording
+           set_names(c('è¨ˆç®—æ—¥', map.(c('ç ¥ç²’ç¨®', 'ç²’åº¦', 'ãƒ­ãƒƒãƒˆç•ªå·', 'é…åˆç‡'), ~ str_c(., c('A', 'B', 'C'))), 'D50èª¤å·®ç‡', 'å³æ›²éƒ¨é¢ç©ã®èª¤å·®ç‡')) %>%
+           bind_rows() %>% mutate_at(1, ~ as_datetime(., tz = 'Asia/Tokyo')) %>% mutate_at(11:15, as.numeric)
     rec[1, 1] <- now()
+
     for (i in 1:nrow(dt1)) for (j in 1:nrow(dt2)) for (k in 1:nrow(dt3)) {
         ## Selection
         di <- bind_rows(slice(dt1, i), slice(dt2, j), slice(dt3, k))  # Make a tibble of a combination with dt1(i), dt2(j), and dt3(k)
-        rec[1, 2:10] <- unlist(di[c('type', 'class', 'lot')])
-        if (Sys.getenv('OS') != '') rec[1, 5:7] <- map.(unlist(rec[1, 5:7]), ~ if (!is.na(.)) str_c('\'', .) else .)  # Add ' to 6-12 for excel
+        rec[1, 2:10] <- di[c('type', 'class', 'lot')] %>% unlist() %>% as.list()
+        if (Sys.getenv('OS') != '') {
+            rec[1, 5:7] <- unlist(rec[1, 5:7]) %>% map(~ if (!is.na(.)) str_c('\'', .) else .)  # Add ' to 6-12 for excel
+        }
+
         ## Calculation for the mixing ratio
         iLcalc <- getXYlines.(di, cook = T) %>% set_names(c('b1', 'b2', 'b3'))
-        xCom <- c(iLcalc$'b1'[[1]], iLcalc$'b2'[[1]], if (!alive(iLcalc$'b3')) NULL else iLcalc$'b3'[[1]]) %>% unique(.) %>% sort(.)
+        xCom <- c(iLcalc$'b1'[[1]], iLcalc$'b2'[[1]], if (!alive(iLcalc$'b3')) NULL else iLcalc$'b3'[[1]]) %>% unique() %>% sort()
         def.(c('yRef', 'yBase1', 'yBase2', 'yBase3'), list(bestYiv.(dtRef, xRef), bestYiv.(iLcalc$'b1', xCom), bestYiv.(iLcalc$'b2', xCom), bestYiv.(iLcalc$'b3', xCom)))
         result_fit <- rssFit.(xRef, xCom, yRef, yBase1, yBase2, yBase3)
         Ans <- result_fit$'ratio'
         rec[1, 11:13] <- ifelse (!alive(di[3, ]), NA, Ans[3]) %>% c(Ans[-3], .)  # To show vacant cell in the output csv when C isn't used
         d50 <- if (!alive(dtReal)) result_fit$'d50_mismatch' else dt4$'D50' /xRef[which.max(yRef)] -1  # Simu := PDF-D50, Veri := measured D50
-        rec[1, 14:15] <- c(d50, result_fit$'tail_mismatch')
+        rec[1, 14:15] <- c(d50, result_fit$'tail_mismatch') %>% as.list()
+
         ## Drawing data
         iLraw <- getXYlines.(di, cook = F) %>% set_names(c('b1', 'b2', 'b3'))
         dtMix <- tibble(x = xCom, y = Ans[1] *yBase1 +Ans[2] *yBase2 +if (!alive(yBase3)) 0 else Ans[3] *yBase3)
         dL <- list(dtRef, iLraw$'b1', iLraw$'b2', if (!alive(iLraw$'b3')) NA else iLraw$'b3', dtMix, dtReal)
         ## Legend data
         ni <- c(namePull(di[1, ]), namePull(di[2, ]), if (!alive(di[3, ])) NULL else namePull(di [3, ]) )
-        text_pred <- ifelse(eng, 'Prediction', '”’l—\‘ª') %>%
-                     str_c(., ':  (A) ', sprintf('%.2f', Ans[1] *100), '%, (B) ', sprintf('%.2f', Ans[2] *100) ) %>%
+        text_pred <- str_c('æ•°å€¤äºˆæ¸¬:  (A) ', sprintf('%.2f', Ans[1] *100), '%, (B) ', sprintf('%.2f', Ans[2] *100) ) %>%
                      {if (!alive(di[3, ])) str_c(., '%') else str_c(., '%, (C) ', sprintf('%.2f', Ans[3] *100), '%')}
-        text_D50 <- ifelse(eng, 'D50 error: ', 'D50Œë·: ') %>%
-                    str_c(., sprintf('%.2f', d50 *100), '%', ', Tail mismatch: ', sprintf('%.2f', result_fit$'tail_mismatch' *100), '%')
+        text_D50 <- str_c('D50èª¤å·®: ', sprintf('%.2f', d50 *100), '%', ',  Tail mismatch: ', sprintf('%.2f', result_fit$'tail_mismatch' *100), '%')
         Texts <- c('Target',
                    str_c('(A)  ', ni[1]),
                    str_c('(B)  ', ni[2]),
                    if (!alive(di[3, ])) NULL else str_c('(C) ', ni[3]),
                    text_pred,
-                   if (!alive(dtReal)) NULL else ifelse(eng, 'Test result', 'ŒŸØ'),
+                   if (!alive(dtReal)) NULL else 'æ¤œè¨¼',
                    text_D50)
         ## Drawing
         pred_col <- c('blue3', 'orange1', 'purple3', 'firebrick2', 'springgreen3') %>% rep(., times = nrow(dt1) *nrow(dt2) *nrow(dt3))
         color <- c('grey13', 'seashell4', 'snow4', if (!alive(dt3)) NULL else 'bisque4',
                    pred_col[i], if (!alive(dtReal)) 'coral1' else c('aquamarine3', 'chartreuse3'))
         ltys <- c(1,2,3, if (!alive(dt3)) NULL else 4, 1, if (!alive(dtReal)) 0 else c(1, 0))
-        plt.(dL, lty = ltys, xlab = 'Particle Size (ƒÊm)', col = color, Ylims = c(0, NA), name = Texts, PDF = F)
+        plt.(dL, lty = ltys, xlab = 'Particle Size (Î¼m)', col = color, Ylims = c(0, NA), name = Texts, PDF = F)
         ## Recording
         recs <- if (i *j *k == 1) rec else bind_rows(recs, rec)
         if (nrow(dt1) *nrow(dt2) *nrow(dt3) != 1) {
@@ -161,14 +178,138 @@ tunePSD <- function(...) {
             cat(str_c('    i = ', cts, ' (/', nrow(dt1) *nrow(dt2) *nrow(dt3), ')  finished:  ', now(), '\n'))
         }
     }  # End of for
-    if (names(dev.cur()) == 'cairo_pdf') dev.off()  # For simulation
-  # if (alive(dtReal)) save.(name = grN)  # For verification
-    write.(arrange(recs, abs(D50Œë·—¦), abs(‰E‹È•”–ÊÏ‚ÌŒë·—¦)), name = grN) # Sorting so as to choose better combinations easily
+    if (names(dev.cur()) == 'cairo_pdf') dev.off()
+    write.(arrange(recs, abs(D50èª¤å·®ç‡), abs(å³æ›²éƒ¨é¢ç©ã®èª¤å·®ç‡)), name = grN)  # Sorting so as to choose better combinations easily
     setwd(oldDir)
     cat('\n    ... Drawing completed.\n\n')
 }
 
 
 ## RUN ##
-#  tunePSD()
+# tunePSD()
+## END ##
+
+
+## Interactive input for the target D50 for dtRef to slide == (2021-02-12) ========================
+chooseD50 <- function(d, measuredD50_or_peak, ...) {
+	if (str_detect(d['data_type'], 'ideal')
+	masterXY <- d %>% filter(data_type == 'master') %>% getXYlines.(.)
+    minP <- min.(masterXY$x)
+    measuredD50 <- d %>% filter(data_type == 'master') %>% .$D50
+    peakD <- which.max.(masterXY$y) %>% masterXY$x[.]  # := peak in the probability function curve
+    D50 <- ifelse(measured_or_peak, measuredD50, peakD)
+    repeat {
+        num <- readline('\n   What\'s your target D50?  \n\n   >>>  ')
+        if (zenk.(num) %>% {skipMess.(as.numeric(.))} %>% {!is.na(.)}) {
+            num <- zenk.(num) %>% as.numeric(num)
+            minShift <- minP -(D50 -num)
+            if (minShift < 0) cat('\n   Your input is too small to design PSD...\n\n')
+            if (num >= 0 && minShift >= 0) break  # This if () restricts minus D50
+        }
+    }
+    cat(str_c('\n', str_dup('=', times = 38), '\n\n'))
+    return (num -D50)
+}
+
+
+
+
+
+
+
+## Predictor == (2021-02-12) ========================
+tunePSD <- function(...) {
+
+    dL <- getXYlines.(d, cook = T) %>% setNames(d[[1]])
+
+
+    ## First preparation
+    d <- getExcel()  # list data; Ref = 1, Base1 >= 1, Base2 >= 1, Base3 >= 0, Real >= 0
+    def.(c('dt0', 'dt1', 'dt2', 'dt3', 'dt4'), list(dexL$'ref', dexL$'b1', dexL$'b2', dexL$'b3', dexL$'real'))
+    def.(c('dtRef', 'dtReal'), list(getXYlines.(dt0, cook = T)[[1]], getXYlines.(dt4, cook = F)[[1]]))
+    if (dexL$'shift') {
+        dtRef[1] <- dtRef[1] +chooseD50(dL$master, microtracD50 = dexL$'refD50')
+    }
+    xRef <- dtRef[[1]]
+
+    ## Making directory
+    oldDir <- getwd()
+    newDir <- str_c(oldDir, '/#Graphs')
+    if (!file.exists(newDir)) dir.create('#Graphs')
+    setwd(newDir)
+
+    ## Create graph name
+    fn0 <- str_split(File, '\\.')[[1]][1] %>% gsub('/|:|<|>|"|\\?|\\*|\\|', '_', .)
+    fn  <- if (Sys.info()['sysname'] == 'windows' && stringi::stri_enc_detect(fn0)[[1]][1,1] %in% c('ASCII', 'Shift_JIS')) {
+               iconv(fn0, 'utf8', 'cp932')  # ifelse(Sys.getenv('OS') == '', ., iconv(., 'utf8', 'cp932')) %>% gsub('ç²’åº¦èª¿æ•´_', '', .)
+           } else {
+               fn0
+           } %>% gsub('ç²’åº¦èª¿æ•´_', '', .)
+    time_stamp <- str_sub(fn, 1, 6) %>% {skipMess.(parse_number(.))} %>% {if (is.na(.)) today2.() else .} %>% str_c(., '_')
+    tag <- function(dt) if (!alive(dt)) NULL else str_c('_', dt$'lot')
+    grN <- if (!alive(dtReal)) str_c(time_stamp, 'simulate') else str_c(time_stamp, 'verify', tag(dt1), tag(dt2), tag(dt3))
+    save2.(grN)
+
+    ## Start it up
+    rec <- rep(NA_character_, 15) %>%  # Vacant tibble to sum up 'recs' recording
+           set_names(c('è¨ˆç®—æ—¥', map.(c('ç ¥ç²’ç¨®', 'ç²’åº¦', 'ãƒ­ãƒƒãƒˆç•ªå·', 'é…åˆç‡'), ~ str_c(., c('A', 'B', 'C'))), 'D50èª¤å·®ç‡', 'å³æ›²éƒ¨é¢ç©ã®èª¤å·®ç‡')) %>%
+           bind_rows() %>% mutate_at(1, ~ as_datetime(., tz = 'Asia/Tokyo')) %>% mutate_at(11:15, as.numeric)
+    rec[1, 1] <- now()
+
+    for (i in 1:nrow(dt1)) for (j in 1:nrow(dt2)) for (k in 1:nrow(dt3)) {
+        ## Selection
+        di <- bind_rows(slice(dt1, i), slice(dt2, j), slice(dt3, k))  # Make a tibble of a combination with dt1(i), dt2(j), and dt3(k)
+        rec[1, 2:10] <- di[c('type', 'class', 'lot')] %>% unlist() %>% as.list()
+        if (Sys.getenv('OS') != '') {
+            rec[1, 5:7] <- unlist(rec[1, 5:7]) %>% map(~ if (!is.na(.)) str_c('\'', .) else .)  # Add ' to 6-12 for excel
+        }
+
+        ## Calculation for the mixing ratio
+        iLcalc <- getXYlines.(di, cook = T) %>% set_names(c('b1', 'b2', 'b3'))
+        xCom <- c(iLcalc$'b1'[[1]], iLcalc$'b2'[[1]], if (!alive(iLcalc$'b3')) NULL else iLcalc$'b3'[[1]]) %>% unique() %>% sort()
+        def.(c('yRef', 'yBase1', 'yBase2', 'yBase3'), list(bestYiv.(dtRef, xRef), bestYiv.(iLcalc$'b1', xCom), bestYiv.(iLcalc$'b2', xCom), bestYiv.(iLcalc$'b3', xCom)))
+        result_fit <- rssFit.(xRef, xCom, yRef, yBase1, yBase2, yBase3)
+        Ans <- result_fit$'ratio'
+        rec[1, 11:13] <- ifelse (!alive(di[3, ]), NA, Ans[3]) %>% c(Ans[-3], .)  # To show vacant cell in the output csv when C isn't used
+        d50 <- if (!alive(dtReal)) result_fit$'d50_mismatch' else dt4$'D50' /xRef[which.max(yRef)] -1  # Simu := PDF-D50, Veri := measured D50
+        rec[1, 14:15] <- c(d50, result_fit$'tail_mismatch') %>% as.list()
+
+        ## Drawing data
+        iLraw <- getXYlines.(di, cook = F) %>% set_names(c('b1', 'b2', 'b3'))
+        dtMix <- tibble(x = xCom, y = Ans[1] *yBase1 +Ans[2] *yBase2 +if (!alive(yBase3)) 0 else Ans[3] *yBase3)
+        dL <- list(dtRef, iLraw$'b1', iLraw$'b2', if (!alive(iLraw$'b3')) NA else iLraw$'b3', dtMix, dtReal)
+        ## Legend data
+        ni <- c(namePull(di[1, ]), namePull(di[2, ]), if (!alive(di[3, ])) NULL else namePull(di [3, ]) )
+        text_pred <- str_c('æ•°å€¤äºˆæ¸¬:  (A) ', sprintf('%.2f', Ans[1] *100), '%, (B) ', sprintf('%.2f', Ans[2] *100) ) %>%
+                     {if (!alive(di[3, ])) str_c(., '%') else str_c(., '%, (C) ', sprintf('%.2f', Ans[3] *100), '%')}
+        text_D50 <- str_c('D50èª¤å·®: ', sprintf('%.2f', d50 *100), '%', ',  Tail mismatch: ', sprintf('%.2f', result_fit$'tail_mismatch' *100), '%')
+        Texts <- c('Target',
+                   str_c('(A)  ', ni[1]),
+                   str_c('(B)  ', ni[2]),
+                   if (!alive(di[3, ])) NULL else str_c('(C) ', ni[3]),
+                   text_pred,
+                   if (!alive(dtReal)) NULL else 'æ¤œè¨¼',
+                   text_D50)
+        ## Drawing
+        pred_col <- c('blue3', 'orange1', 'purple3', 'firebrick2', 'springgreen3') %>% rep(., times = nrow(dt1) *nrow(dt2) *nrow(dt3))
+        color <- c('grey13', 'seashell4', 'snow4', if (!alive(dt3)) NULL else 'bisque4',
+                   pred_col[i], if (!alive(dtReal)) 'coral1' else c('aquamarine3', 'chartreuse3'))
+        ltys <- c(1,2,3, if (!alive(dt3)) NULL else 4, 1, if (!alive(dtReal)) 0 else c(1, 0))
+        plt.(dL, lty = ltys, xlab = 'Particle Size (Î¼m)', col = color, Ylims = c(0, NA), name = Texts, PDF = F)
+        ## Recording
+        recs <- if (i *j *k == 1) rec else bind_rows(recs, rec)
+        if (nrow(dt1) *nrow(dt2) *nrow(dt3) != 1) {
+            cts <- if (i == 1 && j == 1 && k == 1) 1 else cts +1
+            cat(str_c('    i = ', cts, ' (/', nrow(dt1) *nrow(dt2) *nrow(dt3), ')  finished:  ', now(), '\n'))
+        }
+    }  # End of for
+    if (names(dev.cur()) == 'cairo_pdf') dev.off()
+    write.(arrange(recs, abs(D50èª¤å·®ç‡), abs(å³æ›²éƒ¨é¢ç©ã®èª¤å·®ç‡)), name = grN)  # Sorting so as to choose better combinations easily
+    setwd(oldDir)
+    cat('\n    ... Drawing completed.\n\n')
+}
+
+
+## RUN ##
+# tunePSD()
 ## END ##
