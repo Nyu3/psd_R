@@ -192,7 +192,7 @@ tunePSD <- function(measured_or_peak, ...) {
 
 ## Interactive input for the target D50 for dtRef to slide == (2021-02-12) ========================
 chooseD50 <- function(d, measuredD50_or_peak, ...) {
-	if (str_detect(d['data_type'], 'ideal')
+#	if (str_detect(d['data_type'], 'ideal')
 	masterXY <- d %>% filter(data_type == 'master') %>% getXYlines.(.)
     minP <- min.(masterXY$x)
     measuredD50 <- d %>% filter(data_type == 'master') %>% .$D50
