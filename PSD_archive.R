@@ -9,8 +9,7 @@
 ## https://threeplusone.com/pubs/FieldGuide.pdf
 
 query_lib.(c('minpack.lm', 'pracma'))
-#library('minpack.lm', quietly = T)
-suppressPackageStartupMessages(suppressWarnings(suppressMessages(invisible(library('minpack.lm', quietly = T)))))
+library('minpack.lm', quietly = T)
 formals(nlsLM)$control <- nls.lm.control(maxiter = 1024, nprint = 0)  # nprint = 1 denotes to show results
 
 
@@ -328,12 +327,12 @@ incbeta <- function(x, a, b) pbeta(x, a, b) /beta(a, b)
 ## Short cut 1 == (2020-10-31) ========================
 best_mdl. <- function(mL) map_dbl(mL, ~ {if (!anyNA(.)) deviance(.) else NA}) %>% which.min() %>% {if (length(.) == 0) NULL else mL[[.]]}
 
-## Short cut 2 == (2020-11-10) ========================
+## Short cut 2 == (2021-03-23) ========================
 lazy_call. <- function(x, y, pLL, f, ext = F, y1 = 0, y2 = 0, ...) {
   if (is.data.frame(x) && ncol(x) == 2) def.(c('x', 'y'), list(x[[1]], x[[2]]))
   mL <- list()
   fun_quasi <- formals(f) %>% names(.) %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')')  # args(f)
-  for (i in seq_along(pLL)) mL[[i]] <- tryReturn.(nlsLM(y ~ eval(parse(text = fun_quasi)), start = pLL[[i]]))
+  for (i in seq_along(pLL)) mL[[i]] <- tryReturn.(minpack.lm::nlsLM(y ~ eval(parse(text = fun_quasi)), start = pLL[[i]]))
   mdl <- best_mdl.(mL)
   dev <- dev.(mdl)
   dt_mdl <- lazy_xy.(f, mdl, x, ext, y1, y2)
