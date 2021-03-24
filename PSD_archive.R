@@ -293,7 +293,8 @@ pLL_al_be_ga_de_et_th <- list( list(al=0.1,be=1,ga=1,de=1,et=1,th=1), list(al=0.
                                list(al=0.1,be=0.1,ga=0.01,de=0.1,et=0.01,th=0.1) )
 
 ## gmm
-pLL_al_be_a1_a2_b1_b2_c1_c2 <- c(0.01,1,100) %>% expand.grid(.,.,.,.,.,.) %>% as_tibble() %>%
+library('tidyr', quietly = T)
+pLL_al_be_a1_a2_b1_b2_c1_c2 <- c(0.01,1,100) %>% expand.grid(.,.,.,.,.,.) %>% tibble::as_tibble() %>%
                                rlang::set_names(c('a1','a2','b1','b2','c1','c2')) %>% dplyr::mutate(al=0.5,be=0.5) %>% purrr::transpose()
 
 
