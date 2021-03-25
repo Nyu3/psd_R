@@ -170,7 +170,7 @@ tunePSD <- function(measured_or_peak, ...) {
     color <- c('grey13', 'seashell4', 'snow4', if (!alive(dt3)) NULL else 'bisque4',
                pred_col[i], if (!alive(dtReal)) 'coral1' else c('aquamarine3', 'chartreuse3'))
     ltys <- c(1,2,3, if (!alive(dt3)) NULL else 4, 1, if (!alive(dtReal)) 0 else c(1, 0))
-    plt.(dL, lty = ltys, xlab = 'Particle Size (μm)', col = color, Ylims = c(0, NA), name = Texts, PDF = F)
+    plt.(dL, lty = ltys, xlab = 'Particle Size (μm)', col = color, ylim = c(0, NA), name = Texts, PDF = F)
     ## Recording
     recs <- if (i *j *k == 1) rec else bind_rows(recs, rec)
     if (nrow(dt1) *nrow(dt2) *nrow(dt3) != 1) {

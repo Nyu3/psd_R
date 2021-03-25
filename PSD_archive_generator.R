@@ -1098,7 +1098,7 @@ getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext 
           })
   }
   return(dL)
-}  # d %>% getCumLines.(., ext = T) %>% plt.(., xlab = 'Particle Size (μm)', ylab = 'Cumulative Density', Ylims = c(0, NA), legePos = c(0.8, 0.3), name = c('A-1', 'A-2'))
+}  # d %>% getCumLines.(., ext = T) %>% plt.(., xlab = 'Particle Size (μm)', ylab = 'Cumulative Density', ylim = c(0, NA), legePos = c(0.8, 0.3), name = c('A-1', 'A-2'))
 
 
 ## Correct a PSD label which is interpreted as date == (2020-10-08) ========================
@@ -1255,7 +1255,7 @@ demo_simple <- function (...) {
   dL <- psd [-1] %>% xyL.(.)
   dL_best <- list()
   for (i in seq_along(dL)) dL_best[[i]] <- dL[[i]][[1]] %>% tibble(x = ., qy = bestYiv.(dt = dL[[i]], xAny = ., pdf_group = 'gold'))
-  plt.(dL_best, Ylims = c(0, NA))
+  plt.(dL_best, ylim = c(0, NA))
   for (i in seq_along(dL)) points(dL[[i]], cex = 0.15)
 }
 
@@ -1270,7 +1270,7 @@ demo_any_model_plot <- function(...) {
   qyL <- map2(dt_arxiv$y, dt_arxiv$model, ~ .x(mdl = .y(x, y), x = x))
   xyL <- xyL2.(x, qyL) %>% set_names(dt_arxiv$name)
   save2.('二峰性_W')
-  plt.(xyL[order(mdl_eval)[1:9]], Ylims = c(0, NA), xlab = 'Particle Size (μm)', legePos = c(0.28,0.99), PDF = F, lwd = 1.5)
+  plt.(xyL[order(mdl_eval)[1:9]], ylim = c(0, NA), xlab = 'Particle Size (μm)', legePos = c(0.28,0.99), PDF = F, lwd = 1.5)
 # lines(xyL[[order(mdl_eval)[20]]], col = 'palegreen2', lwd = 1.5)  # The best fitting
   points(getXYlines.(dt_psd, cook = T, n = 100)[[1]], col = 'grey35', lwd = 0.8, cex = 0.5)
   dev.off()
@@ -1326,9 +1326,9 @@ demo_compare. <- function (dt_psd, pdf_group = 'ancient', ...) {
   dL <- c(mdl_old, mdl_new) %>% set_names(c(old, new))
 
 # save2.('Compare_Ag')
-  plt.(dL, Ylims = c (0, NA), xlab = 'Particle Size for an Alumina (μm)', add = 0)
+  plt.(dL, ylim = c (0, NA), xlab = 'Particle Size for an Alumina (μm)', add = 0)
   polygon(c(stepX, rev(stepX)), c(stepY, rep(0, length(stepY))), border = F, col = colTr. ('grey65', 0.6))
-  plt.(dL, Ylims = c (0, NA), add = 2, col = c('slateblue3', 'black'))  # darkorange2
+  plt.(dL, ylim = c (0, NA), add = 2, col = c('slateblue3', 'black'))  # darkorange2
   save.('Compare_alumina2')
 }
 
@@ -1350,7 +1350,7 @@ demo_D50_mismatch <- function(...) {
   Ans <- result_fit$ratio
   dtMix <- tibble(x = xCom, y = Ans[1] *yBase1 +Ans[2] *yBase2)
   dL <- xyL.(psd[-1]) %>% . [c(2,1,3)] %>% c(., list(dtMix)) %>% set_names(c('Target', 'Base1', 'Base2', 'Mix'))
-  plt.(dL, Xlims = range(xCom), Ylims = c(0, NA), xlab = 'Particle Size (μm)')
+  plt.(dL, xlim = range(xCom), ylim = c(0, NA), xlab = 'Particle Size (μm)')
 }
 
 ## Fast vs slow for-loop for mixing ratio == (2020-02-09) ========================
