@@ -11,7 +11,7 @@
 #  select_pdf.('test') %>% .[['model']] %>% map_dbl(~ .(x, y)$dev) %>% set_names(select_pdf.('test')[['name']])
 ## 2nd trial
 #  arxiv %>% filter(para %in% 4) %>% .[127:, ] %>% demo_any_model_ranking(.)
-#  arxiv %>% filter(remark %in% 'spot') %>% demo_any_model_ranking(.)
+#  arxiv %>% filter(remark %in% 'test') %>% demo_any_model_ranking(.)
 #  arxiv %>% filter(! remark %in% 'none') %>% demo_any_model_ranking(.)
 
 
@@ -104,11 +104,11 @@ arxiv <- dplyr::bind_rows(  # Name, Model, Parameter number and Remark
   tb.('Beta kappa', betaKappaF., 3, 'none'),
   tb.('Beta Kies', betaKiesF., 6, 'none'),
   tb.('Beta Kumaraswamy exponential', betaKumaExpF., 5, 'none'),
-  tb.('Beta Kumaraswamy-exponential', betaKumaExp2F., 5, 'test'),
-  tb.('Beta Kumaraswamy-Frechet', betaKumaFreF., 6, 'test'),
-  tb.('Beta Kumaraswamy-Lomax', betaKumaLomF., 6, 'test'),
+  tb.('Beta Kumaraswamy-exponential', betaKumaExp2F., 5, 'none'),
+  tb.('Beta Kumaraswamy-Frechet', betaKumaFreF., 6, 'none'),
+  tb.('Beta Kumaraswamy-Lomax', betaKumaLomF., 6, 'none'),
   tb.('Beta Kumaraswamy Weibull', betaKumaWeiF., 6, 'none'),
-  tb.('Beta Kumaraswamy-Weibull', betaKumaWei2F., 6, 'test'),
+  tb.('Beta Kumaraswamy-Weibull', betaKumaWei2F., 6, 'none'),
   tb.('Beta Lindley', betaLinF., 3, 'none'),
   tb.('Beta Lindley geometric', betaLinGeoF., 4, 'none'),
   tb.('Beta Lindley Poisson', betaLinPoiF., 4, 'none'),
@@ -252,6 +252,7 @@ arxiv <- dplyr::bind_rows(  # Name, Model, Parameter number and Remark
   tb.('Exponentiated generalized Marshall-Olkin-exponential', expGenMaolExpF., 4, 'none'),
   tb.('Exponentiated generalized Marshall-Olkin-Lomax', expGenMaolLomF., 5, 'none'),
   tb.('Exponentiated generalized Marshall-Olkin-Weibull', expGenMaolWeiF., 5, 'none'),
+  tb.('Exponentiated generalized Pareto', expGenPareF., 2, 'none'),
   tb.('Exponentiated generalized power exponential', expGenPowExpF., 3, 'none'),
   tb.('Exponentiated generalized power function', expGenPowFunF., 4, 'none'),
   tb.('Exponentiated generalized quasi Lindley', expGenQuaLinF., 4, 'none'),
@@ -378,10 +379,10 @@ arxiv <- dplyr::bind_rows(  # Name, Model, Parameter number and Remark
   tb.('Gamma Weibull', gamWeiF., 3, 'none'),
   tb.('Gausian mixture model', gmmF., 5, 'none'),
   tb.('Generalized additive Weibull', genAddWeiF., 4, 'none'),
-  tb.('Generalized additive Weibull-Burr XII', genAddWeiBurr12F., 6, 'test'),
-  tb.('Generalized additive Weibull-Gumbel', genAddWeiGumF., 6, 'test'),
-  tb.('Generalized additive Weibull log-logistic', genAddWeiLogLogisF., 6, 'test'),
-  tb.('Generalized additive Weibull-uniform', genAddWeiUniF., 5, 'test'),
+  tb.('Generalized additive Weibull-Burr XII', genAddWeiBurr12F., 6, 'none'),
+  tb.('Generalized additive Weibull-Gumbel', genAddWeiGumF., 6, 'none'),
+  tb.('Generalized additive Weibull log-logistic', genAddWeiLogLogisF., 6, 'none'),
+  tb.('Generalized additive Weibull-uniform', genAddWeiUniF., 5, 'none'),
   tb.('Generalized alpha-beta skew normal', genAlpBetaSkewNormF., 5, 'none'),
   tb.('Generalized beta', genBetaF., 5, 'none'),
   tb.('Generalized beta of the second kind', genBeta2F., 4, 'none'),
@@ -429,6 +430,13 @@ arxiv <- dplyr::bind_rows(  # Name, Model, Parameter number and Remark
   tb.('Generalized log-gamma', genLogGamF., 3, 'bronze'),  # * (-3.80) left-so-heavy
   tb.('Generalized logistic', genLogisF., 3, 'none'),
   tb.('Generalized Marshall-Olkin Kumaraswamy-exponential', genMaolKumaExpF., 5, 'platinum'),  # **** (-11.09)
+  tb.('Generalized Marshall-Olkin Kumaraswamy-extended exponentiated Pareto', genMaolKumaExtExpPareF., 6, 'none'),
+  tb.('Generalized Marshall-Olkin Kumaraswamy-extended modified Weibull', genMaolKumaExtModWeiF., 7, 'none'),
+  tb.('Generalized Marshall-Olkin Kumaraswamy-extended power', genMaolKumaExtPowF., 5, 'none'),
+  tb.('Generalized Marshall-Olkin Kumaraswamy-Frechet', genMaolKumaFreF., 6, 'none'),
+  tb.('Generalized Marshall-Olkin Kumaraswamy-Gompertz', genMaolKumaGomF., 6, 'none'),
+  tb.('Generalized Marshall-Olkin Kumaraswamy-Lomax', genMaolKumaLomF., 6, 'none'),
+  tb.('Generalized Marshall-Olkin Kumaraswamy-Weibull', genMaolKumaWeiF., 6, 'none'),
   tb.('Generalized modified exponential', genModExpF., 2, 'none'),
   tb.('Generalized modified Weibull', genModWeiF., 4, 'none'),
   tb.('Generalized normal ver.1', genNorm1F., 3, 'none'),
@@ -1049,12 +1057,12 @@ select_pdf. <- function(pdf_group = 'spot', ...) {
 }  # select_pdf.('test')
 
 
-## Transforming rate of Frequency into Probability == (2020-06-25) ========================
-freq2dens. <- function(df, ...) {
-  df <- as_tibble(df) %>% filter(.[2] != 0)  # freq data often has y = 0 as count between the start-end of points
-# def.(c('x', 'y'), list(xy.coords(df)$'x', xy.coords(df)$'y'))
-  areaRate <- 1 /area.(df)
-  return(df %>% mutate_at(2, ~ . *areaRate))
+## Transforming rate of Frequency into Probability == (2021-08-10) ========================
+freq2dens. <- function(d, ...) {
+# def.(c('x', 'y'), list(xy.coords(d)$'x', xy.coords(d)$'y'))
+  d <- as_tibble(d) %>% filter(y != 0)  # freq data often has y = 0 as count between the start-end of points
+  areaRate <- 1 /area.(d)
+  return(d %>% mutate(y = y *areaRate))
 }
 
 
@@ -1101,21 +1109,46 @@ getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext 
 }  # d %>% getCumLines.(., ext = T) %>% plt.(., xlab = 'Particle Size (μm)', ylab = 'Cumulative Density', ylim = c(0, NA), legePos = c(0.8, 0.3), name = c('A-1', 'A-2'))
 
 
-## Correct a PSD label which is interpreted as date == (2020-10-08) ========================
-psdLab. <- function(d, ...) {
+## Correct a PSD label and make a nested data == (2021-08-13) ========================
+tidyPSD. <- function(d, ...) {
   query_lib.(c('hablar', 'tidyr'))
-  d <- mutate_at(d, '粒度', ~ gsub('月', '-', .) %>% gsub('日', '', .) %>% gsub('2001/2/3', '1/2-3', .))
-  if (map.(d['粒度'], ~ skipMess.(ymd (.))) %>% {!anyNA(.)}) d['粒度'] <- map.(d['粒度'], str_sub, 6, 10)  # 2019/5/10 as chr
-  if (map.(d['粒度'], str_detect, pattern = '月|日') %>% any(.)) d['粒度'] <- map.(d['粒度'], ~ gsub('月', '-', .) %>% gsub('日', '', .))
-  d <- d %>% hablar::retype() %>% rename(!!c(type = '砥粒種', grade = '粒度', lot = 'ロット番号', time = '測定日時'))
-  d <- tidyr::unite(d[c('type', 'grade', 'lot')], sep = ' :: ', col = tag) %>% bind_cols(., d)
-  return(d)
+  if (str_detect(names(d), '砥粒種|粒度|ロット番号|備考|測定日時', negate = T) %>% all) stop('Microtrac粒度分布エクセルが見つかりません．\n\n', call. = F)
+  tenta <- d$粒度 %>% gsub('月', '-', .) %>% gsub('日', '', .) %>% gsub('2001/2/3', '1/2-3', .)
+  tf <- skipMess.(ymd(tenta)) %>% {!is.na(.)}
+  tenta[tf] <- tenta[tf] %>% str_sub(., 6, 10) %>% gsub('/', '-', .)  # 2021/6/12 --> '6/12' --> '6-12'
+
+  d <- d %>% mutate(粒度 = tenta) %>% rename(type := 砥粒種, grade := 粒度, lot := ロット番号, remark := 備考, time := 測定日時)
+  d <- d %>% unite(type:grade, sep = ' (', col = tag, na.rm = T) %>% unite(tag:lot, sep = ') ', col = tag, na.rm = T) %>% hablar::retype()
+
+  ## make basic stack data into list
+  stacks <- c('体積平均径', '個数平均径', '面積平均径m2/cm3', '比表面積', '標準偏差', 'D5', 'D10', 'D25', 'D50', 'D75', 'D90', 'D95', 'D99', 'D99.9', 'D100')
+  d_stack <- d %>% select(all_of(stacks))  # Never use contains(stacks) because of its auto arrange (D5, D50, D10, ...)
+  stackL <- list()
+  for (i in seq(nrow(d_stack))) stackL[[i]] <- tibble(stack = stacks, value = unlist(d_stack[i, ]))
+
+  ## make x channel and y frequency of PSD data into list
+  Xch <- str_subset(names(d), pattern = 'class') %>% parse_number(.)
+  Ypsd <- select(d, starts_with('class'))
+  xyL <- list()
+  for (i in seq(nrow(Ypsd))) xyL[[i]] <- tibble(x = Xch, y = unlist(Ypsd[i, ]))
+  xyL0 <- map(xyL, function(dxy) {
+            not0 <- which(dxy$y != 0)  # y signals
+            sta <- first(not0) %>% {if (. == 1) 1 else . -1}  # leave two 0 on the both sides in y signals
+            end <- last(not0) %>% {if (. == nrow(dxy)) nrow(dxy) else . +1}
+            return(dxy[sta:end, ])
+          })
+  xyL1 <- map(xyL0, ~ gamXY.(x = .$x, y = .$y, boost = T, n.boost = 200) %>% as_tibble)  # 200 ch interpolated
+
+  ## create nested data
+  out <- d %>% select(!contains(c(stacks, 'class'))) %>%
+         mutate(stack = stackL, raw_freq = xyL0, raw_dens = map(xyL0, freq2dens.), gam_freq = xyL1, gam_dens = map(xyL1, freq2dens.))
+  return(out)
 }
 
 
-## Quasi y after best modeling from some archive == (2021-03-09) ========================
-bestYiv. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
-  if (is.na(d) %>% all) return(NA)
+## Quasi y after best modeling from some archive == (2021-08-10) ========================
+best_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
+  if (is.na(d) %>% all) return(NULL)
   def.(c('x', 'y'), list(xy.coords(d)$x, xy.coords(d)$y))
   mdl_sel <- select_pdf.('platinum')
   mdl_res <- map(mdl_sel$model, ~.(x, y))
@@ -1124,37 +1157,41 @@ bestYiv. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
   return(qXY)
 }
 
-## Swing for loop for mixing ratio == (2020-02-09) ========================
-swing4_ratio. <- function(leftX, rightX, xRef, xCom, yRef, yBase1, yBase2, ...) {  ## 'leftX', 'rightX' := local range for fitting criteria
 
-leftX <- peak_x
-rightX <- percentileX(0.38)
-bestYiv.(dtRef, peak_x)
-  refPartX <- whichNear.(vec = xRef, ref = c(leftX, rightX)) %>% {xRef[.[1] : .[2]]}
-  refPartY <- whichNear.(vec = xRef, ref = c(leftX, rightX)) %>% {yRef[.[1] : .[2]]}
-  comPartX <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {xCom[.[1] : .[2]]}
-
-  ## Mixing ratio determined by local fitting from peak to D95
-  for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
-      if (stepW == 0.1) tenta <- c(0, 1)  # Starters for mixing ratio in the loop range
-      Ratio <- tenta %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
-      Rss <- rep(NA_real_, length(Ratio))
-      for (i in seq_along(Ratio)) {  # Compare not y but area due to different number of points between ref & composit
-          mix_Yi <- Ratio[i] *yBase1 +(1 -Ratio[i]) *yBase2
-          comPartY <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {mix_Yi[.[1] : .[2]]}
-          Rss[i] <- {area.(refPartX, refPartY) -area.(comPartX, comPartY)} %>% {sum(. ^2)}
-      }
-      tenta <- interval2.(Rss, valley = T) %>% Ratio[.]
-      if (length(tenta) == 1) break
-  }
-  final_ratio <- mean(tenta) %>% {c(., 1 -., 0)}
-  return (final_ratio)
+## Quasi y after best modeling from the special archive == (2021-08-15) ========================
+fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
+  if (is.na(d) %>% all) return(NULL)
+  def.(c('x', 'y'), list(xy.coords(d)$x, xy.coords(d)$y))
+  mdl <- arxiv %>% filter(name == 'Generalized Marshall-Olkin Kumaraswamy-exponential')  # Generalized transmuted log-logistic
+  mdl_best <- map(mdl$model, ~.(x, y))[[1]]
+  qXY <- lazy_xy.(mdl_best$formula, mdl_best$model, xAny, ext = T)
+  return(qXY)
 }
 
-## Swing for loop for mixing ratio == (2020-02-09) ========================
-swing4_norm2section. <- function(x, y, ...) {
+
+## Swing for loop for mixing ratio == (2021-08-10) ========================
+swing4_ratio. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
+  for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
+    if (stepW == 0.1) tenta <- c(0, 1)  # Starters for mixing ratio in the loop range
+    Ratio <- tenta %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
+    Rss <- rep(NA_real_, length(Ratio))
+    for (i in seq_along(Ratio)) {  # Compare not y but area due to different number of points between ref & composit
+      iMix_part <- tibble(x = xy1$x, y = Ratio[i] *xy1$y +(1 -Ratio[i]) *xy2$y) %>% .[com_xrange, ]  # xy1$x = xy2$x is the common x
+      Rss[i] <- {area.(xy0[ref_xrange, ]) -area.(iMix_part)} %>% {sum(. ^2)}  # determined by local fitting from peak to D95
+    }
+    tenta <- interval2.(Rss, valley = T) %>% Ratio[.]
+    if (length(tenta) == 1) break
+  }
+  final_ratio <- mean(tenta) %>% {c(., 1 -., 0)}
+  return(final_ratio)
+}
+
+
+## Swing for loop for mixing ratio == (2021-08-09) ========================
+swing4_norm2section. <- function(d, ...) {
   ## Seak the intersection between the raw PSD & the normal
   ## NOTE: Both peaks are the same. The question is how to determine the sd of the norm
+  x <- d$x; y <- d$y
   peak_x <- x[which.max(y)]
   Dcal90 <- whichNear.(vec = cumP.(y), ref = 0.90) %>% x[.]
   for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
@@ -1178,47 +1215,29 @@ swing4_norm2section. <- function(x, y, ...) {
   return(section_x)
 }
 
-## 1st index of the goodness of the fitting, oriented to PSD measurment == (2020-02-09) ========================
-d50_mismatch. <- function(peak_x, xCom, yBase1, yBase2, mixRatio, ...) {
-  mixY <- mixRatio[1] *yBase1 +mixRatio[2] *yBase2
-  d50_mismatch <- xCom[which.max(mixY)] %>% {. /peak_x -1}  # Note: d50 never match to the peak...
-  return(d50_mismatch)
-}
 
-## 2nd index of the goodness of the fitting, oriented to slicing capability == (2020-02-09) ========================
-local_mismatch. <- function(leftX, rightX, xRef, xCom, yRef, yBase1, yBase2, mixRatio, ...) {
-  mixY <- mixRatio[1] *yBase1 +mixRatio[2] *yBase2
-  refPartX <- whichNear.(vec = xRef, ref = c(leftX, rightX)) %>% {xRef[.[1] : .[2]]}
-  refPartY <- whichNear.(vec = xRef, ref = c(leftX, rightX)) %>% {yRef[.[1] : .[2]]}
-  mixPartX <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {xCom[.[1] : .[2]]}
-  mixPartY <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {mixY[.[1] : .[2]]}
-  local_mismatch <- area.(mixPartX, mixPartY) /area.(refPartX, refPartY) -1
-  return(local_mismatch)
-}
-
-
-## Residual Sum of Square: local optimization for right tail == (2020-02-10) ========================
-rssFit. <- function(xRef, xCom, yRef, yBase1, yBase2, yBase3, ...) {  # xCom means composite x1 +x2 for y1 & y2
-# percentileX <- function(per) whichNear.(vec = cumP0.(xRef, yRef), ref = per) %>% xRef[.]
-  percentileX <- function(per) whichNear.(vec = cumP.(yRef), ref = per) %>% xRef[.]
-  peak_x <- xRef[which.max(yRef)]  # Near; percentileX(0.37)
+## Residual Sum of Square: local optimization for right tail == (2021-08-14) ========================
+rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam data but estimated p(θ|x)                                                                                                                                                                                                                                  
+  ## Marking x as index of fitting
+  percentileX <- function(per) whichNear.(vec = cumP.(xy0$y), ref = per) %>% xy0$x[.]
+  peak_x <- xy0$x[which.max(xy0$y)]  # Near; percentileX(0.37)                                                  
   PERT_x <- (percentileX(0.1) +percentileX(0.99) +4 *peak_x) /6
-  norm_x <- swing4_norm2section.(xRef, yRef)
+  norm_x <- swing4_norm2section.(xy0)
+
+  
+  ## Concerned x range to make the criteria of the goodness of fitting
+  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}
+  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
 
   ## Mixing ratio determined by local fitting from peak to D95
-  mixRatio <- swing4_ratio.(leftX = peak_x, rightX = percentileX(0.95), xRef, xCom, yRef, yBase1, yBase2)
-  ## plt.(tibble(xCom, mixRatio[1] *yBase1 +mixRatio[2] *yBase2) %>% xyL.)
-  demo_ratio <- function(...) {
-    info <- arxiv %>% filter(name == 'Generalized beta prime') %>% {.[['model']][[1]](xRef, yRef, ext = T)}
-    plt.(list(tibble(xRef, yRef), info$xy) %>% set_names(c('target', 'simulated')))
-  }
-  ## 2nd goodness of fitting for right tail determined by local fitting from peak to D90
-  ## Matching ratio of the (curve from D50 to D97.5) of dtRef
+  mixRatio <- swing4_ratio.(ref_xrange, com_xrange, xy0, xy1, xy2, xy3)
+  xy123 <- tibble(x = xy1$x, y = mixRatio[1] *xy1$y +mixRatio_d95[2] *xy2$y +mixRatio[3] *(xy3$y %||% 0))
 
-  indicator1 <- d50_mismatch.(peak_x, xCom, yBase1, yBase2, mixRatio)
-  indicator2 <- local_mismatch.(leftX = min(PERT_x, norm_x), rightX = percentileX(0.90), xRef, xCom, yRef, yBase1, yBase2, mixRatio)
+  ## Mismatch evaluation
+  index1 <- xy123$x[which.max(xy123$y)] %>% {. /peak_x -1}  # 1st index is the peak mismatch, oriented to mixed PSD accuracy
+  index2 <- area.(xy123[com_xrange, ]) /area.(xy0[ref_xrange, ]) -1  # 2nd is the local area mismatch, oriented to slicing capability
 
-  return(list(ratio = mixRatio, d50_mismatch = indicator1, tail_mismatch = indicator2))
+  return(list(ratio = mixRatio, peak_mismatch = index1, tail_mismatch = index2))
 }
 
 
@@ -1250,15 +1269,6 @@ vital_psd. <- function(dt_psd, ...) {
 }
 
 
-## Tutorial == (2020-02-13) ========================
-demo_simple <- function (...) {
-  dL <- psd [-1] %>% xyL.(.)
-  dL_best <- list()
-  for (i in seq_along(dL)) dL_best[[i]] <- dL[[i]][[1]] %>% tibble(x = ., qy = bestYiv.(dt = dL[[i]], xAny = ., pdf_group = 'gold'))
-  plt.(dL_best, ylim = c(0, NA))
-  for (i in seq_along(dL)) points(dL[[i]], cex = 0.15)
-}
-
 ## Any model plot for a single PSD data == (2020-08-13) ========================
 demo_any_model_plot <- function(...) {
   dt_psd <- pp.()
@@ -1276,29 +1286,30 @@ demo_any_model_plot <- function(...) {
   dev.off()
 }
 
-## Any model estimation for several data == (2020-10-31) ========================
+
+## Any model estimation for several data == (2021-03-30) ========================
 demo_any_model_ranking <- function(arxiv_sel, ...) {
   query_lib.('beepr')
   psd2 <- getData.(path = '~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD/test4newPDF.xlsx')$sample
   obj_names <- pmap_chr(psd2[1:2], ~ str_flatten(c(...), collapse = '::'))
   tenta <- rep(NA_real_, nrow(psd2)) %>% set_names(obj_names) %>% bind_rows() %>% .[rep(1, length(arxiv_sel[['name']])), ]
   for (i in seq_along(tenta)) {
-    dt <- getXYlines.(psd2[i, ], cook = T)[[1]]
-    tenta[i] <- arxiv_sel$model %>% map(~.(dt$x, dt$y)) %>% map_dbl(~ .$dev)
+    d <- getXYlines.(psd2[i, ], cook = T)
+    tenta[i] <- arxiv_sel$model %>% map(~.(d$x, d$y)) %>% map_dbl(~ .$dev)
     cat(str_c('    i = ', i, ' (/', nrow(psd2), ')  finished: ', now(), '\n'))
-#   if (i %% 10 == 0) 'beepr'::beep(2)
+    if (i %% 10 == 0) beepr::beep(2)
     if (i == nrow(psd2)) beepr::beep(3)
   }
   res_value <- bind_cols(name = arxiv_sel$name, para = arxiv_sel$para, tenta)  # value fitting result; write.(res_value)
 
   ## Remake tiddy data
-  dt_res <- res_value %>% pivot_longer(-c(name, para), names_to = 'sample', values_to = 'dev')
+  d_res <- res_value %>% pivot_longer(-c(name, para), names_to = 'sample', values_to = 'dev')
   ## Total, average, sd, NA number
-  stat_res <- function(dt_res) {
-    dt_res %>% group_by(name) %>%
+  stat_res <- function(d_res) {
+    d_res %>% group_by(name) %>%
     summarise(total = sum.(dev), avg = mean.(dev), sd = sd.(dev), na = sum(is.na(dev)), para = mean(para)) %>% arrange(total)
   }
-  eval1 <- stat_res(dt_res)
+  eval1 <- stat_res(d_res)
 # write.(eval1)
   ## NA
   eval2 <- eval1 %>% arrange(na) %>% filter(na > 0) %>% {if (nrow(.) == 0) 'None' else .}
@@ -1308,92 +1319,3 @@ demo_any_model_ranking <- function(arxiv_sel, ...) {
   write2.(list(value = res_value %>% select(!para), ranking = eval1), str_c(today2.(), '_psdResult_trial'))
 }
 
-
-## Compare models in a plot == (2020-05-25) ========================
-demo_compare. <- function (dt_psd, pdf_group = 'ancient', ...) {
-  dt_psd <- pp.()
-  dt <- getXYlines.(dt_psd, cook = T)[[1]]
-  orig <- getXYlines.(dt_psd, cook = F)[[1]]
-    stepX <- rep(orig[[1]], each = 2) %>% .[-1]
-    stepY <- rep(orig[[2]], each = 2) %>% .[-length(.)]
-  def.(c('x', 'y'), list(xy.coords(dt)$'x', xy.coords(dt)$'y'))
-
-# mdl_sel <- select_pdf.(pdf_group = 'spot')
-  old <- c('Gamma', 'Log-normal', 'Nukiyama-Tanasawa', 'Weibull', '3-parameter log-hyperbolic')[3]
-    mdl_old <- arxiv %>% filter(name %in% old) %>% .[['model']] %>% map(~ .(x, y, ext = T)$xy)
-  new <- c('Generalized beta prime', 'Generalized Fisher-Tippett', 'Johnson\'s SU', 'Prentice', 'Singh-Maddala')[1]
-    mdl_new <- arxiv %>% filter(name %in% new) %>% .[['model']] %>% map(~ .(x, y, ext = T)$xy)
-  dL <- c(mdl_old, mdl_new) %>% set_names(c(old, new))
-
-# save2.('Compare_Ag')
-  plt.(dL, ylim = c (0, NA), xlab = 'Particle Size for an Alumina (μm)', add = 0)
-  polygon(c(stepX, rev(stepX)), c(stepY, rep(0, length(stepY))), border = F, col = colTr. ('grey65', 0.6))
-  plt.(dL, ylim = c (0, NA), add = 2, col = c('slateblue3', 'black'))  # darkorange2
-  save.('Compare_alumina2')
-}
-
-## dt1 -dt2 == (2020-04-17) ========================
-deff_psd <- function(...) {
-  dt1 <- pp.() %>% {getXYlines.(., cook = F, conv = F)[[1]]}
-  dt2 <- pp.() %>% {getXYlines.(., cook = T, conv = F)[[1]]}
-}
-
-
-## Mixture plot for exmple == (2020-02-17) ========================
-demo_D50_mismatch <- function(...) {
-  def.(c('xRef', 'xCom', 'dtRef', 'b1', 'b2'), list(psd[[4]], unique(sort(c(psd[[6]], psd[[2]]))), psd[4:5], psd[6:7], psd[2:3]))
-  def.(c('yRef', 'yBase1', 'yBase2'), list(bestYiv.(dtRef, xRef), bestYiv.(b1, xCom), bestYiv.(b2, xCom)))
-# plt.(xyL2.(xCom,tibble(yBase1, yBase2)))
-  result_fit <- rssFit.(xRef, xCom, yRef, yBase1, yBase2, yBase3 = NA)
-
-# save2.('1_prepare')
-  Ans <- result_fit$ratio
-  dtMix <- tibble(x = xCom, y = Ans[1] *yBase1 +Ans[2] *yBase2)
-  dL <- xyL.(psd[-1]) %>% . [c(2,1,3)] %>% c(., list(dtMix)) %>% set_names(c('Target', 'Base1', 'Base2', 'Mix'))
-  plt.(dL, xlim = range(xCom), ylim = c(0, NA), xlab = 'Particle Size (μm)')
-}
-
-## Fast vs slow for-loop for mixing ratio == (2020-02-09) ========================
-demo_swing4 <- function(...) {  # 'leftX', 'rightX' := local range for fitting criteria
-  def.(c('xRef', 'xCom', 'yRef', 'yBase1', 'yBase2'), list(psd[[4]], unique(sort(c(psd[[2]], psd[[6]]))), psd[[5]], psd[[7]], psd[[3]]))
-  def.(c('leftX', 'rightX'), list(xRef[which.max(yRef)], whichNear.(vec = cumP.(yRef), ref = 0.95) %>% xRef[.]))
-  refPartX <- whichNear.(vec = xRef, ref = c(leftX, rightX)) %>% {xRef[.[1] : .[2]]}
-  refPartY <- whichNear.(vec = xRef, ref = c(leftX, rightX)) %>% {yRef[.[1] : .[2]]}
-  comPartX <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {xCom[.[1] : .[2]]}
-
-  ## Fast swing
-  recX <- recY <- vector()
-  for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
-    if (stepW == 0.1) tenta <- c(0, 1)  # Starters for mixing ratio in the loop range
-    Ratio <- tenta %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
-    Rss <- rep(NA_real_, length(Ratio))
-    for (i in seq_along(Ratio)) {  # Compare not y but area due to different number of points between ref & composit
-      mix_Yi <- Ratio[i] *yBase1 +(1 -Ratio[i]) *yBase2
-      comPartY <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {mix_Yi[.[1] : .[2]]}
-      Rss[i] <- {area.(refPartX, refPartY) -area.(comPartX, comPartY)} %>% {sum(. ^2)}
-    }
-    recX <- c(recX, Ratio)  # This is used on the demo-plot below
-    recY <- c(recY, Rss)
-    tenta <- interval2.(Rss, valley = T) %>% Ratio[.]
-    if (length(tenta) == 1) break
-  }
-  finalAns <- mean(tenta) %>% {c(., 1 -., 0)}
-
-  ## Too long to calculate
-  ratios <- seq(0, 1, by = 1e-5)
-  rss <- rep(NA_real_, length(ratios))
-  for (i in seq_along(ratios)) {  # Compare not y but area due to different number of points between ref & composit
-    mix_Yi <- ratios[i] *yBase1 +(1 -ratios[i]) *yBase2
-    comPartY <- whichNear.(vec = xCom, ref = c(leftX, rightX)) %>% {mix_Yi[.[1] : .[2]]}
-    rss[i] <- {area.(refPartX, refPartY) -area.(comPartX, comPartY)} %>% {sum(. ^2)}
-  }
-  finalAns_slow <- which.min(rss) %>% ratios[.]  # The same result to the fast swing version
-
-  ## Plot
-  plt.(tibble(ratios, rss) %>% xyL.(.))
-  plt.(data.frame(x = recX, y = recY) %>% arrange(x) %>% xyL.(.))
-  points(recX, recY)
-  points(finalAns[1], min(rss), pch = 19, col = 'coral2')
-  mtext('Mixing Ratio of Base1', side = 1, las = 1, line = par ('mar')[1] -1.01, cex = 0.95)
-  mtext('Residual Sum of Square', side = 2, las = 3, line = par ('mar')[2] -0.95, cex = 0.95)
-}

@@ -80,12 +80,12 @@ pLL_nu_al_be_ga <- list( list(nu=0,al=1,be=1,ga=1), list(nu=10,al=0.1,be=10,ga=1
 ## halfLogisExp invExp invtExp lindley maxwell porTho
 pLL_lam <- list( list(lam=0.1), list(lam=1), list(lam=10), list(lam=-1), list(lam=0.01), list(lam=0), list(lam=100) )
 
-## alpPowExp alpPowInvExp anoGenTransExp compoRay expExt expGeo expHalfCau expHalfNorm expLin expLom expMax expPoiLin gamma gamGeo
-## genExp genExpInvExp genExpInvRay genHalfNorm genInvExp genInvtExp genLin2 genModExp gompertz halfLogisNadaHaghi halfLogisWei
-## invGam invLom invRayPoi invWei linGeo linPoi logisLogis logisUni lomax moffat mukIs mustapha1 nadaHaghi newLinExp newWeightLin
-## nonCentChi nonCentChiSqr oddGenExpExp oddLogLogisExp oddMomExpExp pear2 poiWeiLin powLin psuedoWei quaLin rayRay rosin scaChi
-## scaChiSqr scaInvChi scaInvChiSqr strechedExp symPrentice transExp transInvRay transLin transRay transTransRay truncLomUni weibull
-## weightExp weightLin wilHil burr10Lom2
+## alpPowExp alpPowInvExp anoGenTransExp compoRay expExt expGenPare　expGeo expHalfCau expHalfNorm expLin expLom expMax expPoiLin
+## gamma gamGeo genExp genExpInvExp genExpInvRay genHalfNorm genInvExp genInvtExp genLin2 genModExp gompertz halfLogisNadaHaghi
+## halfLogisWei invGam invLom invRayPoi invWei linGeo linPoi logisLogis logisUni lomax moffat mukIs mustapha1 nadaHaghi newLinExp
+## newWeightLin nonCentChi nonCentChiSqr oddGenExpExp oddLogLogisExp oddMomExpExp pear2 poiWeiLin powLin psuedoWei quaLin rayRay
+## rosin scaChi scaChiSqr scaInvChi scaInvChiSqr strechedExp symPrentice transExp transInvRay transLin transRay transTransRay
+## truncLomUni weibull weightExp weightLin wilHil burr10Lom2
 pLL_lam_al <- list( list(lam=0.1,al=0.1), list(lam=1,al=1), list(lam=1,al=10), list(lam=100,al=10), list(lam=10,al=1),
                     list(lam=0.1,al=10), list(lam=0.01,al=0.1), list(lam=1,al=0.1), list(lam=-1,al=0.01) )
 
@@ -173,8 +173,9 @@ pLL_lam_al_be_ga_de <- list( list(lam=1,al=1,be=1,ga=1,de=1), list(lam=1,al=10,b
                              list(lam=100,al=1,be=0.01,ga=0.01,de=1) )
 
 ## addWei addWeiLogLogis betaExpWeiPoi betaKumaFre betaKumaLom betaKumaWei betaKumaWei2 betaExpModWei betaGenInvWeiGeo betaGenMaolFre
-## betaGenMaolGom betaGenMaolLom betaGenMaolWei expTransExpModWei genAddWeiLogLogis genTransAddWei genTransWeiGeo
-## kumaTransExpLineFR kumaTransExpWei kumaTransModWei kumaWeiQuaLin mdcoBurr12 transExpAddWei
+## betaGenMaolGom betaGenMaolLom betaGenMaolWei expTransExpModWei genAddWeiLogLogis genMaolKumaFre genMaolKumaGom genMaolKumaLom
+## genMaolKumaWei genTransAddWei genTransWeiGeo kumaTransExpLineFR kumaTransExpWei kumaTransModWei kumaWeiQuaLin mdcoBurr12
+## transExpAddWei
 pLL_lam_al_be_ga_de_et <- list( list(lam=1,al=0.1,be=1,ga=1,de=1,et=1), list(lam=1,al=0.1,be=10,ga=1,de=1,et=10),
                                 list(lam=1,al=0.01,be=10,ga=1,de=1,et=1), list(lam=1,al=1,be=1,ga=1,de=1,et=1),
                                 list(lam=1,al=0.1,be=10,ga=1,de=1,et=1), list(lam=1,al=-1,be=10,ga=1,de=1,et=10),
@@ -183,9 +184,10 @@ pLL_lam_al_be_ga_de_et <- list( list(lam=1,al=0.1,be=1,ga=1,de=1,et=1), list(lam
                                 list(lam=1,al=-100,be=10,ga=10,de=0.1,et=1), list(lam=1,al=1,be=1,ga=1,de=1,et=0.1),
                                 list(lam=1,al=10,be=1,ga=0.1,de=0.1,et=0.01), list(lam=-1,al=1,be=1,ga=0.1,de=0.01,et=0.001),
                                 list(lam=-1,al=10,be=1,ga=0.1,de=0.01,et=0.001), list(lam=-0.1,al=-0.01,be=-0.1,ga=1,de=0.1,et=-0.0001),
-                                list(lam=10,al=0.1,be=0.01,ga=0.01,de=0.1,et=10), list(lam=10,al=10,be=-1,ga=10,de=1,et=-0.1) )
+                                list(lam=10,al=0.1,be=0.01,ga=0.01,de=0.1,et=10), list(lam=10,al=10,be=-1,ga=10,de=1,et=-0.1),
+                                list(lam=-100,al=10,be=1,ga=0.1,de=100,et=0.1), list(lam=1000,al=1,be=1,ga=0.1,de=1,et=0.1) )
 
-## betaGenMaolExtModWei betaPhani genTransExpAddWei kumaTransAddWei kumaTransExpModWei kumaWeiBurr12
+## betaGenMaolExtModWei betaPhani genMaolKumaExtModWei genTransExpAddWei kumaTransAddWei kumaTransExpModWei kumaWeiBurr12
 pLL_lam_al_be_ga_de_et_th <- list( list(lam=1,al=0.1,be=1,ga=1,de=1,et=1,th=1), list(lam=1,al=0.1,be=10,ga=1,de=1,et=1,th=1),
                                    list(lam=1,al=0.01,be=10,ga=1,de=1,et=1,th=1), list(lam=1,al=1,be=1,ga=1,de=1,et=1,th=1),
                                    list(lam=1,al=0.1,be=10,ga=1,de=1,et=1,th=1), list(lam=1,al=-1,be=10,ga=1,de=1,et=1,th=1),
@@ -197,8 +199,9 @@ pLL_lam_al_be_ga_de_et_th <- list( list(lam=1,al=0.1,be=1,ga=1,de=1,et=1,th=1), 
                                    list(lam=100,al=-0.001,be=-0.1,ga=1,de=0.01,et=-0.01,th=0.001),
                                    list(lam=0.1,al=1,be=1,ga=-0.1,de=-1,et=100,th=-1), list(lam=0.1,al=1,be=1,ga=-0.1,de=-1,et=1000,th=-1),
                                    list(lam=0.1,al=1,be=1,ga=-0.01,de=-1,et=10000,th=-1),
-                                   list(lam=0.1,al=1,be=1,ga=-0.01,de=-1,et=1000,th=-1),
-                                   list(lam=0.1,al=0.1,be=1,ga=-0.01,de=-1,et=1000,th=-1) )
+                                   list(lam=0.1,al=1,be=1,ga=-0.01,de=-1,et=1000,th=-1), list(lam=100,al=0.1,be=1,ga=1,de=10,et=1,th=0.1),
+                                   list(lam=0.1,al=0.1,be=1,ga=-0.01,de=-1,et=1000,th=-1),
+                                   list(lam=10,al=1,be=10,ga=0.1,de=10,et=-0.1,th=-1) )
 
 ## kumaTransExpAddWei
 pLL_lam_al_be_ga_de_p_q_r <- list( list(lam=1,al=0.1,be=1,ga=1,de=1,p=1,q=1,r=1), list(lam=1,al=0.1,be=10,ga=1,de=1,p=1,q=1,r=1),
@@ -251,9 +254,9 @@ pLL_al_be_ga_de <- list( list(al=0.1,be=1,ga=10,de=10), list(al=0.1,be=1,ga=100,
                          list(al=1,be=0.1,ga=1,de=0.1) )
 
 ## betaExpBurr12 betaLineFRGeo betaGeoGenLineFR betaLineFRLog betaModWei betaModWeightRay betaQuadHazRate betaSarZaiModWei betaSlyLach
-## burr3MaolWei burr12WeiLog transExpAddWei expBurr12Wei expKumaWei extDag extWeiKuma freTopLeoKuma gamLogLogisWei genExpAddWei gmm
-## kumaExpModWei kumaModWei kumaWeiUni maolAddWei mcdoGenLineFR modBetaLineFR modBetaLineExp newModWei phani transAddWei weiGomMak
-## (extWeiKuma)
+## burr3MaolWei burr12WeiLog transExpAddWei expBurr12Wei expKumaWei extDag extWeiKuma freTopLeoKuma gamLogLogisWei genExpAddWei
+## genMaolKumaExtPow gmm kumaExpModWei kumaModWei kumaWeiUni maolAddWei mcdoGenLineFR modBetaLineFR modBetaLineExp newModWei phani
+## transAddWei weiGomMak (extWeiKuma)
 pLL_al_be_ga_de_et <- list( list(al=0.1,be=1,ga=1,de=1,et=1), list(al=0.1,be=10,ga=1,de=1,et=10), list(al=0.01,be=10,ga=1,de=1,et=1),
                             list(al=1,be=1,ga=1,de=1,et=1), list(al=0.1,be=10,ga=1,de=1,et=1), list(al=0.1,be=0.1,ga=0.1,de=0.1,et=0.1),
                             list(al=1,be=0.1,ga=0.1,de=0.1,et=0.1), list(al=0.1,be=0.01,ga=0.001,de=0.001,et=0.01),
@@ -274,10 +277,10 @@ pLL_al_be_ga_de_et <- list( list(al=0.1,be=1,ga=1,de=1,et=1), list(al=0.1,be=10,
                             list(al=0.001,be=0.001,ga=0.001,de=0.001,et=-10), list(al=0.1,be=0.001,ga=0.001,de=0.001,et=-10),
                             list(al=0.1,be=0.01,ga=0.001,de=0.001,et=-10), list(al=10,be=0.01,ga=0.1,de=0.0001,et=-10),
                             list(al=1,be=0.1,ga=10,de=0.001,et=-10), list(al=0.1,be=1,ga=-0.1,de=0.1,et=0.01),
-                            list(al=1,be=1,ga=0.00001,de=0.001,et=0.00001) )
+                            list(al=1,be=1,ga=0.00001,de=0.001,et=0.00001), list(al=1,be=-10,ga=1,de=10,et=-1) )
 
-## betaAddWei betaGenMaolExtExpPare betaKies betaNadaKotz flexAddWei genAddWeiBurr12  kumaExpAddWei mcdoModWei modBetaGenLineFR
-## modBetaModWei
+## betaAddWei betaGenMaolExtExpPare betaKies betaNadaKotz flexAddWei genAddWeiBurr12 genMaolKumaExtExpPare kumaExpAddWei mcdoModWei
+## modBetaGenLineFR modBetaModWei
 pLL_al_be_ga_de_et_th <- list( list(al=0.1,be=1,ga=1,de=1,et=1,th=1), list(al=0.1,be=10,ga=1,de=1,et=10,th=1),
                                list(al=0.01,be=10,ga=1,de=1,et=1,th=1), list(al=-1,be=-0.1,ga=1,de=0.1,et=10,th=1),
                                list(al=1,be=1,ga=1,de=1,et=1,th=1), list(al=0.1,be=10,ga=1,de=1,et=1,th=1),
@@ -346,9 +349,9 @@ lazy_def. <- function(model, ...) {
 }
 
 ## Short cut 4 == (2021-02-09) ========================
-lazy_xy. <- function(formulae, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension for rawX) which is used in the lazy_call.()
+lazy_xy. <- function(f, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension for rawX) which is used in the lazy_call.()
   if (is.null(model)) return(NULL)
-  f_chr <- formals(formulae) %>% names(.) %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')') %>% str_replace('x', 'anyX')
+  f_chr <- formals(f) %>% names(.) %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')') %>% str_replace('x', 'anyX')
   lazy_def.(model)
   if (ext == FALSE && deviance(model) > 0.013) {  # bad fitting (which looks parallel to the x-axis): use rawX
     anyX <- rawX
@@ -2774,6 +2777,15 @@ expGenMaolWeiF. <- function(x, y = NULL, ext = F, ...) {
 }
 
 
+## Exponentiated generalized Pareto distribution == (2021-06-23) ==
+## https://arxiv.org/abs/1708.01686
+expGenPareF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_lam_al
+  f <- function(x,lam,al) exp(x) /lam *(1 +al /lam *exp(x)) ^(-1 /al -1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
 ## Exponentiated generalized power exponential distribution == (2020-08-05) ==
 ## https://www.academia.edu/23043652/The_Kumaraswamy_Generalized_Power_Weibull_Distribution?email_work_card=view-paper
 expGenPowExpF. <- function(x, y = NULL, ext = F, ...) {
@@ -4530,6 +4542,76 @@ genMaolKumaExpF. <- function(x, y = NULL, ext = F, ...) {
   pLL <- pLL_lam_al_be_ga_de
   z <- function(x,lam) 1 -exp(-x /lam)
   f <- function(x,lam,al,be,ga,de) al *be *ga *de ^ga /lam *(1 -z(x,lam)) *z(x,lam) ^(al -1) *(1 -z(x,lam) ^al) ^(be *ga -1) *(1 -(1 -de) *(1 -z(x,lam) ^al) ^be) ^(-ga -1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-extended exponentiated Pareto distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaExtExpPareF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_al_be_ga_de_et_th
+  z <- function(x,ga,et,th) (1 -(x /ga) ^(-et)) ^th
+  f <- function(x,al,be,ga,de,et,th) al *be *de ^ga *et *th *(x /ga *((x /ga) ^et -1)) ^(-1) *z(x,ga,et,th) ^al *(1 -z(x,ga,et,th) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,ga,et,th) ^al) ^be) ^(ga +1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-extended modified Weibull distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaExtModWeiF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_lam_al_be_ga_de_et_th
+  z <- function(x,lam,et,th) 1 -exp(-x /lam -et *x ^th)
+  f <- function(x,lam,al,be,ga,de,et,th) al *be *ga *de ^ga *(1 /lam +et *th *x ^(th -1)) *(1 -z(x,lam,et,th)) *z(x,lam,et,th) ^(al -1) *(1 -z(x,lam,et,th) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,lam,et,th) ^al) ^be) ^(ga +1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-extended power distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaExtPowF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_al_be_ga_de_et
+  z <- function(x,ga,et) (ga *x) ^et
+  f <- function(x,al,be,ga,de,et) al *be *ga *de ^ga *et /x *z(x,ga,et) ^al *(1 -z(x,ga,et) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,ga,et) ^al) ^be) ^(ga +1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-Frechet distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaFreF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_lam_al_be_ga_de_et
+  z <- function(x,lam,et) 1 -exp(-(x /lam) ^(-et))
+  f <- function(x,lam,al,be,ga,de,et) al *be *ga *de ^ga *et /lam *(x /lam) ^(-et -1) *(1 -z(x,lam,et)) *z(x,lam,et) ^(al -1) *(1 -z(x,lam,et) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,lam,et) ^al) ^be) ^(ga +1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-Gompertz distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaGomF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_lam_al_be_ga_de_et
+  z <- function(x,lam,et) 1 -exp(-lam *et *(exp(x /lam) -1))
+  f <- function(x,lam,al,be,ga,de,et) al *be *ga *de ^ga *et *exp(x /lam) *(1 -z(x,lam,et)) *z(x,lam,et) ^(al -1) *(1 -z(x,lam,et) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,lam,et) ^al) ^be) ^(ga +1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-Lomax distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaLomF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_lam_al_be_ga_de_et
+  z <- function(x,lam,et) 1 -(1 +x /lam) ^(-et)
+  f <- function(x,lam,al,be,ga,de,et) al *be *ga *de ^ga *et /lam *(1 +x /lam) ^(-1) *(1 -z(x,lam,et)) *z(x,lam,et) ^(al -1) *(1 -z(x,lam,et) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,lam,et) ^al) ^be) ^(ga +1)
+  lazy_call.(x,y,pLL,f,ext)
+}
+
+
+## Generalized Marshall-Olkin Kumaraswamy-Weibull distribution == (2021-03-30) ==
+## https://www.researchgate.net/publication/283316144_The_Generalized_Marshall-Olkin-Kumaraswamy-G_family_of_distributions
+genMaolKumaWeiF. <- function(x, y = NULL, ext = F, ...) {
+  pLL <- pLL_lam_al_be_ga_de_et
+  z <- function(x,lam,et) 1 -exp(-x ^et /lam)
+  f <- function(x,lam,al,be,ga,de,et) al *be *ga *de ^ga *et /lam *x ^(et -1) *(1 -z(x,lam,et)) *z(x,lam,et) ^(al -1) *(1 -z(x,lam,et) ^al) ^(be *ga -1) /(1 -(1 -de) *(1 -z(x,lam,et) ^al) ^be) ^(ga +1)
   lazy_call.(x,y,pLL,f,ext)
 }
 
