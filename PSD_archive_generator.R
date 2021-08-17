@@ -1162,7 +1162,7 @@ best_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
 fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
   if (is.na(d) %>% all) return(NULL)
   def.(c('x', 'y'), list(xy.coords(d)$x, xy.coords(d)$y))
-  mdl <- arxiv %>% filter(name == 'Generalized Marshall-Olkin Kumaraswamy-exponential')  # Generalized transmuted log-logistic
+  mdl <- arxiv %>% filter(name == 'Generalized transmuted log-logistic')  # Generalized Marshall-Olkin Kumaraswamy-exponential
   mdl_best <- map(mdl$model, ~.(x, y))[[1]]
   qXY <- lazy_xy.(mdl_best$formula, mdl_best$model, xAny, ext = T)
   return(qXY)
