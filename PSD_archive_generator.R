@@ -1231,7 +1231,7 @@ rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam dat
 
   ## Mixing ratio determined by local fitting from peak to D95
   mixRatio <- swing4_ratio.(ref_xrange, com_xrange, xy0, xy1, xy2, xy3)
-  xy123 <- tibble(x = xy1$x, y = mixRatio[1] *xy1$y +mixRatio_d95[2] *xy2$y +mixRatio[3] *(xy3$y %||% 0))
+  xy123 <- tibble(x = xy1$x, y = mixRatio[1] *xy1$y +mixRatio[2] *xy2$y +mixRatio[3] *(xy3$y %||% 0))
 
   ## Mismatch evaluation
   index1 <- xy123$x[which.max(xy123$y)] %>% {. /peak_x -1}  # 1st index is the peak mismatch, oriented to mixed PSD accuracy
