@@ -1038,7 +1038,7 @@ arxiv <- dplyr::bind_rows(  # Name, Model, Parameter number and Remark
 ) %>% dplyr::mutate(dist_No = dplyr::row_number())
 
 
-## Selection of PDF == (2020-06-21) ========================
+## Selection of PDF == (2021-08-17) ========================
 select_pdf. <- function(pdf_group = 'spot', ...) {
   ## Confirm remarks; unique(arxiv[['remark']])
   remark2 <- c('platinum', 'gold', 'silver', 'bronze', 'classic', str_c('para', 1:8), 'test', 'spot')
@@ -1046,21 +1046,21 @@ select_pdf. <- function(pdf_group = 'spot', ...) {
     stop('Input right name....\n\n', call. = F)
   } else {
     if (!any(pdf_group %in% c(str_c('para', 1:8), 'test'))) {
-      out <- arxiv %>% filter(remark == pdf_group)
+      out <- arxiv %>% dplyr::filter(remark == pdf_group)
     } else if (str_detect(pdf_group, pattern = 'para')){  # Say, 'para3'
-      out <- arxiv %>% filter(para == parse_number(pdf_group))
+      out <- arxiv %>% dplyr::filter(para == parse_number(pdf_group))
     } else if (pdf_group == 'test') {
-      out <- arxiv %>% filter(remark %in% c('platinum', 'test'))
+      out <- arxiv %>% dplyr::filter(remark %in% c('platinum', 'test'))
     }
   }
   return(out)
 }  # select_pdf.('test')
 
 
-## Transforming rate of Frequency into Probability == (2021-08-10) ========================
+## Transforming rate of Frequency into Probability == (2021-08-17) ========================
 freq2dens. <- function(d, ...) {
 # def.(c('x', 'y'), list(xy.coords(d)$'x', xy.coords(d)$'y'))
-  d <- as_tibble(d) %>% filter(y != 0)  # freq data often has y = 0 as count between the start-end of points
+  d <- as_tibble(d) %>% dplyr::filter(y != 0)  # freq data often has y = 0 as count between the start-end of points
   areaRate <- 1 /area.(d)
   return(d %>% mutate(y = y *areaRate))
 }
@@ -1158,11 +1158,11 @@ best_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
 }
 
 
-## Quasi y after best modeling from the special archive == (2021-08-15) ========================
+## Quasi y after best modeling from the special archive == (2021-08-17) ========================
 fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
   if (is.na(d) %>% all) return(NULL)
   def.(c('x', 'y'), list(xy.coords(d)$x, xy.coords(d)$y))
-  mdl <- arxiv %>% filter(name == 'Generalized transmuted log-logistic')  # Generalized Marshall-Olkin Kumaraswamy-exponential
+  mdl <- arxiv %>% dplyr::filter(name == 'Generalized transmuted log-logistic')  # Generalized Marshall-Olkin Kumaraswamy-exponential
   mdl_best <- map(mdl$model, ~.(x, y))[[1]]
   qXY <- lazy_xy.(mdl_best$formula, mdl_best$model, xAny, ext = T)
   return(qXY)
@@ -1269,10 +1269,10 @@ vital_psd. <- function(dt_psd, ...) {
 }
 
 
-## Any model plot for a single PSD data == (2020-08-13) ========================
+## Any model plot for a single PSD data == (2020-08-17) ========================
 demo_any_model_plot <- function(...) {
   dt_psd <- pp.()
-  dt_arxiv <- arxiv %>% filter(remark %in% 'gold')
+  dt_arxiv <- arxiv %>% dplyr::filter(remark %in% 'gold')
   dt <- getXYlines.(dt_psd, cook = T, n = 150)[[1]]
   def.(c('x', 'y'), list(xy.coords(dt)$x, xy.coords(dt)$y))
   mdl_eval <- map(dt_arxiv$model, ~.(x, y)) %>% map.(~ dev.(.))
@@ -1287,7 +1287,7 @@ demo_any_model_plot <- function(...) {
 }
 
 
-## Any model estimation for several data == (2021-03-30) ========================
+## Any model estimation for several data == (2021-08-17) ========================
 demo_any_model_ranking <- function(arxiv_sel, ...) {
   query_lib.('beepr')
   psd2 <- getData.(path = '~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD/test4newPDF.xlsx')$sample
@@ -1312,7 +1312,7 @@ demo_any_model_ranking <- function(arxiv_sel, ...) {
   eval1 <- stat_res(d_res)
 # write.(eval1)
   ## NA
-  eval2 <- eval1 %>% arrange(na) %>% filter(na > 0) %>% {if (nrow(.) == 0) 'None' else .}
+  eval2 <- eval1 %>% arrange(na) %>% dplyr::filter(na > 0) %>% {if (nrow(.) == 0) 'None' else .}
   ## Print the final evaluation
   cat('\n  Total deviance without NA...\n\n'); print(eval1)
   cat('\n  Count NA...\n\n'); print(eval2)

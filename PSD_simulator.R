@@ -3,19 +3,20 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2021-08-13) ========================
+## Excel reader for sevral sheets == (2021-08-17) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
   d <- getData.(filetype = 'xls|xlsx|粒度調整') %>% tidyPSD.
 
   ## Rename data type and count them
-  d <- d %>% mutate(sheet = sheet %>% gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|Master', 'master', .) %>%
+  d <- d %>% mutate(sheet = sheet %>%
+                            gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|Master', 'master', .) %>%
                             gsub('基材1|基材A|基材a', 'A', .) %>% gsub('基材2|基材B|基材b', 'B', .) %>% gsub('基材3|基材C|基材c', 'C', .) %>%
                             gsub('検証|Test|TEST', 'test', .)
-       )  # whichNear.(d$sheet, c('ideal', 'master', 'A', 'B', 'C', 'test'))
+    )
 
   ## Warning shortage
-  cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) filter(d, sheet == x) %>% nrow())  # table(d$sheet) is not good
+  cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) dplyr::filter(d, sheet == x) %>% nrow())  # table(d$sheet) is not good
   if (cnt['A'] == 0) stop('基材 A sheetのデータ数が不足しています．\n\n', call. = F)
   if (cnt['B'] == 0) stop('基材 B sheetのデータ数が不足しています．\n\n', call. = F)
   if (cnt[c('ideal', 'master')] %>% sum == 0) stop('理想分布形状またはマスターsheetのデータ数が不足しています．\n\n', call. = F)
@@ -23,8 +24,8 @@ getPSD <- function(...) {
   ## Take a concerned row
   chooseRow <- function(.d, concern, mess = NULL) {
     if (str_detect(.d$sheet, concern) %>% any) {
-      row_one <- .d %>% filter(sheet == concern) %>% .$tag %>% choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T)
-      .d <- bind_rows(filter(.d, tag == row_one), filter(.d, sheet != concern))
+      row_one <- .d %>% dplyr::filter(sheet == concern) %>% .$tag %>% choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T)
+      .d <- bind_rows(dplyr::filter(.d, tag == row_one), dplyr::filter(.d, sheet != concern))
     }
     return(.d)
   }
@@ -34,10 +35,10 @@ getPSD <- function(...) {
     d <- chooseRow(d, 'ideal', '理想分布')
 
     ## Watch out for Microtrac D50!! D50 order are "gam_freq < raw_freq < peak(gam_dens) < Mictrotrac D50 < raw_dens < gam_dens"
-    d50_microtrac <- d %>% filter(sheet == 'ideal') %>% .[['stack']] %>% .[[1]] %>% pull(value, stack) %>% .['D50']  # Microtrac
-  # d50_gam_dens <- d %>% filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[whichNear.(cumP0.(.), 0.5),  'x']]}
-  # d50_gam_peak <- d %>% filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[which.max(.$y),  'x']]}
-    d50_gam_min <- d %>% filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[1,  'x']]}
+    d50_microtrac <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['stack']] %>% .[[1]] %>% pull(value, stack) %>% .['D50']  # Microtrac
+  # d50_gam_dens <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[whichNear.(cumP0.(.), 0.5),  'x']]}
+  # d50_gam_peak <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[which.max(.$y),  'x']]}
+    d50_gam_min <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[1,  'x']]}
     d50 <- d50_microtrac
 
     ## Interactive input for the target D50 (because you have only ideal PSD)
@@ -60,13 +61,13 @@ getPSD <- function(...) {
     ## Rename
     d <- d %>% mutate(sheet = gsub('ideal', 'target', sheet), d50 = num)
   } else if (cnt['master'] > 0) {  # When you have ideal & master sheets, the master is given the priority
-    d50_master <- d %>% pull(stack, sheet) %>% .$master %>% filter(stack == 'D50') %>% .[['value']]
+    d50_master <- d %>% pull(stack, sheet) %>% .$master %>% dplyr::filter(stack == 'D50') %>% .[['value']]
     d <- d %>% chooseRow('master', 'マスターサンプル') %>% mutate(sheet = gsub('master', 'target', sheet), d50 = d50_master)  # choose & rename
   }
 
   ## Choose the action to simulate / testify
   messages <- if (cnt['test'] > 0) choice.(c('シミュレーション', '検証'), 'どちらの番号を実行しますか', chr = T, one = T) else 'シミュレーション'
-  if (messages == 'シミュレーション') out <- d %>% filter(sheet != 'test')
+  if (messages == 'シミュレーション') out <- d %>% dplyr::filter(sheet != 'test')
   if (messages == '検証') out <- d %>% chooseRow('A', '基材 A') %>% chooseRow('B', '基材 B') %>% chooseRow('C', '基材 C')
 
   ## Assign the unique name
@@ -76,7 +77,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2021-08-14) ========================
+## Estimator == (2021-08-17) ========================
 tunePSD <- function(...) {
   query_lib.('scico')
   ## Preparation
@@ -86,10 +87,10 @@ tunePSD <- function(...) {
     nm[str_detect(names(nm), 'test')] <- d %>% pull(remark, sheet) %>% {.[str_detect(names(.), 'test')]}
   }
   ta <- d %>% pull(gam_dens, sheet) %>% {set_names(list(.$target), 'target')}
-  pa <- d %>% filter(str_detect(sheet, 'A')) %>% {set_names(.[['gam_dens']], .$sheet)}
-  pb <- d %>% filter(str_detect(sheet, 'B')) %>% {set_names(.[['gam_dens']], .$sheet)}
-  pc <- d %>% filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
-  te <- d %>% filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
+  pa <- d %>% dplyr::filter(str_detect(sheet, 'A')) %>% {set_names(.[['gam_dens']], .$sheet)}
+  pb <- d %>% dplyr::filter(str_detect(sheet, 'B')) %>% {set_names(.[['gam_dens']], .$sheet)}
+  pc <- d %>% dplyr::filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
+  te <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
   mx <- list()
 
   ## Calculation
@@ -181,7 +182,7 @@ tunePSD <- function(...) {
   if (names(dev.cur()) == 'cairo_pdf') dev.off()
   ## Excel output
   tbl1 <- calc %>% select(!c(dL, legeN)) %>% select_if(colSums(is.na(.)) != nrow(.))
-  te2 <- d %>% filter(str_detect(sheet, 'test')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
+  te2 <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
   tbl2 <- c(ta, pa, pb, pc, mx, te2) %>% {.[!sapply(., is.null)]} %>%
           map2(., names(.), ~ .x[1:2] %>% set_names(str_c(.y, c('.x', '.y')))) %>% list2tibble.
   write2.(list(tbl1, tbl2), name = grN, sheet = list('result', 'xy'))
