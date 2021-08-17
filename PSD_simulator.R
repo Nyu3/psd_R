@@ -158,11 +158,8 @@ tunePSD <- function(...) {
 
   ## Create graph name
   fn0 <- str_split(File, '\\.xls|\\.xlsx')[[1]][1] %>% gsub('/|:|<|>|"|\\?|\\*|\\|', '_', .)
-  grN <- if (Sys.info()['sysname'] == 'windows' && stringi::stri_enc_detect(fn0)[[1]][1,1] %in% c('ASCII', 'Shift_JIS')) {
-           iconv(fn0, 'utf8', 'cp932')  # ifelse(Sys.getenv('OS') == '', ., iconv(., 'utf8', 'cp932')) %>% gsub('粒度調整_', '', .)
-         } else {
-           fn0
-         } %>% gsub('粒度調整', if_else (is.null(te[[1]]), 'シミュ', '検証'), .)
+  grN <- {if (Sys.info()['sysname'] == 'windows' && !stringi::stri_enc_isutf8(fn0)) iconv(fn0, 'utf8', 'cp932') else fn0} %>%
+         gsub('粒度調整', if_else(is.null(te[[1]]), 'シミュ', '検証'), .)
   save2.(grN)
 
   ## Plot: target, A, B, (C), estimation, (test)
@@ -185,7 +182,7 @@ tunePSD <- function(...) {
   te2 <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
   tbl2 <- c(ta, pa, pb, pc, mx, te2) %>% {.[!sapply(., is.null)]} %>%
           map2(., names(.), ~ .x[1:2] %>% set_names(str_c(.y, c('.x', '.y')))) %>% list2tibble.
-  write2.(list(tbl1, tbl2), name = grN, sheet = list('result', 'xy'))
+  write3.(list(result = tbl1, xy = tbl2), name = grN)
 
   setwd(oldDir); cat('\n    ... Estimation completed.\n\n')
 }
