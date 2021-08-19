@@ -22,10 +22,16 @@ getPSD <- function(...) {
   if (cnt[c('ideal', 'master')] %>% sum == 0) stop('理想分布形状またはマスターsheetのデータ数が不足しています．\n\n', call. = F)
 
   ## Take a concerned row
-  chooseRow <- function(.d, concern, mess = NULL) {
+  chooseRow <- function(.d, concern, mess = NULL, one = T) {
     if (str_detect(.d$sheet, concern) %>% any) {
-      row_one <- .d %>% dplyr::filter(sheet == concern) %>% .$tag %>% choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T)
-      .d <- bind_rows(dplyr::filter(.d, tag == row_one), dplyr::filter(.d, sheet != concern))
+      row_tag <- .d %>% dplyr::filter(sheet == concern) %>% .$tag %>% {
+                   if (one == TRUE) {
+                     choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T, fulltext = T)
+                   } else {
+                     choice.(., str_c(mess, 'は, 1 2 のようにスペース入れて1つ以上選べます'), one = F, fulltext = T)
+                   }
+                 }
+      .d <- bind_rows(dplyr::filter(.d, tag %in% row_tag), dplyr::filter(.d, sheet != concern))
     }
     return(.d)
   }
@@ -68,7 +74,9 @@ getPSD <- function(...) {
   ## Choose the action to simulate / testify
   messages <- if (cnt['test'] > 0) choice.(c('シミュレーション', '検証'), 'どちらの番号を実行しますか', chr = T, one = T) else 'シミュレーション'
   if (messages == 'シミュレーション') out <- d %>% dplyr::filter(sheet != 'test')
-  if (messages == '検証') out <- d %>% chooseRow('A', '基材 A') %>% chooseRow('B', '基材 B') %>% chooseRow('C', '基材 C')
+  if (messages == '検証') {
+    out <- d %>% chooseRow('A', '基材A') %>% chooseRow('B', '基材B') %>% chooseRow('C', '基材C') %>% chooseRow('test', '検証', one = F)
+  }
 
   ## Assign the unique name
   make.unique2 <- function(x, sep = '') ave(x, x, FUN = function(a) if (length(a) > 1) str_c(a, 1:length(a), sep = sep) else a)
