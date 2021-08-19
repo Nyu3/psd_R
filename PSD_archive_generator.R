@@ -1109,7 +1109,7 @@ getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext 
 }  # d %>% getCumLines.(., ext = T) %>% plt.(., xlab = 'Particle Size (μm)', ylab = 'Cumulative Density', ylim = c(0, NA), legePos = c(0.8, 0.3), name = c('A-1', 'A-2'))
 
 
-## Correct a PSD label and make a nested data == (2021-08-13) ========================
+## Correct a PSD label and make a nested data == (2021-08-18) ========================
 tidyPSD. <- function(d, ...) {
   query_lib.(c('hablar', 'tidyr'))
   if (str_detect(names(d), '砥粒種|粒度|ロット番号|備考|測定日時', negate = T) %>% all) stop('Microtrac粒度分布エクセルが見つかりません．\n\n', call. = F)
@@ -1117,7 +1117,10 @@ tidyPSD. <- function(d, ...) {
   tf <- skipMess.(ymd(tenta)) %>% {!is.na(.)}
   tenta[tf] <- tenta[tf] %>% str_sub(., 6, 10) %>% gsub('/', '-', .)  # 2021/6/12 --> '6/12' --> '6-12'
 
-  d <- d %>% mutate(粒度 = tenta) %>% rename(type := 砥粒種, grade := 粒度, lot := ロット番号, remark := 備考, time := 測定日時)
+  d <- d %>% mutate(粒度 = tenta) %>%
+       rename(type := 砥粒種, grade := 粒度, lot := ロット番号, time := 測定日時) %>% {
+         if ('備考' %in% names(d)) rename(., remark := 備考) else mutate(., remark := NA_character_) %>% relocate(remark, .after = lot)
+       }
   d <- d %>% unite(type:grade, sep = ' (', col = tag, na.rm = T) %>% unite(tag:lot, sep = ') ', col = tag, na.rm = T) %>% hablar::retype()
 
   ## make basic stack data into list

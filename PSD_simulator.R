@@ -3,10 +3,10 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2021-08-17) ========================
+## Excel reader for sevral sheets == (2021-08-18) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
-  d <- getData.(filetype = 'xls|xlsx|粒度調整') %>% tidyPSD.
+  d <- getData.(filetype = '粒度調整') %>% tidyPSD.  # 'xls|xlsx|粒度調整'
 
   ## Rename data type and count them
   d <- d %>% mutate(sheet = sheet %>%
