@@ -77,14 +77,17 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2021-08-17) ========================
+## Estimator == (2021-08-18) ========================
 tunePSD <- function(...) {
   query_lib.('scico')
   ## Preparation
   d <- getPSD()
   nm <- d %>% pull(tag, sheet)
   if (str_detect(d$sheet, 'test') %>% any) {  # test info: tag << remark (ex. A12.3% : B87.7%)
-    nm[str_detect(names(nm), 'test')] <- d %>% pull(remark, sheet) %>% {.[str_detect(names(.), 'test')]}
+    lege_tag_test <- d %>% pull(tag, sheet) %>% {.[str_detect(names(.), 'test')]}
+    lege_remark_test <- d %>% pull(tag, sheet) %>% {.[str_detect(names(.), 'test')]}
+    nm[str_detect(names(nm), 'test')] <-  # if no comment in the remark as NA, replace'em tothe tag name
+      map2_chr(lege_remark_test, lege_tag_test, ~ replace_na(.x, replace = .y))
   }
   ta <- d %>% pull(gam_dens, sheet) %>% {set_names(list(.$target), 'target')}
   pa <- d %>% dplyr::filter(str_detect(sheet, 'A')) %>% {set_names(.[['gam_dens']], .$sheet)}
@@ -141,10 +144,14 @@ tunePSD <- function(...) {
         start_time <- now()
         cat(str_c('    i = ', ctr, ' (/', length(pa) *length(pb) *length(pc), ')  finished:  ', start_time, '\n'))
       } else {
-        pass_sec <- start_time %--% now() %>% {
-                      if (time_length(., unit = 'sec') < 60) time_length(., unit = 'sec') else time_length(., unit = 'min')
-                    } %>% sprintf('%.1f', .)
-        cat(str_c('    i = ', ctr, ' (/', length(pa) *length(pb) *length(pc), ')  finished:  ', pass_sec, ' sec\n'))
+        time_obj <- start_time %--% now()
+        pass_time <-
+          if (time_length(time_obj, unit = 'sec') < 60) {
+            str_c(time_length(time_obj, unit = 'sec') %>% sprintf('%.1f', .), ' sec\n')
+          } else {
+            str_c(time_length(time_obj, unit = 'min') %>% sprintf('%.2f', .), ' min\n')
+          }
+        cat(str_c('    i = ', ctr, ' (/', length(pa) *length(pb) *length(pc), ')  finished:  ', pass_time))
       }
     }
   }  # END of for
@@ -170,7 +177,7 @@ tunePSD <- function(...) {
     if (is.null(te[[1]])) {  # simulate
       di <- calc$dL[[i]]
       cols <- c('turku', 'tokyo', 'acton', 'oslo', 'bamako')[n_cyc.(i, 5)] %>% col2(.)
-    } else {  # testify
+    } else {  # testify; target, A, B, (C), mix, dummy, test1, ...
       di <- calc$dL[[i]] %>% {c(.[1:5], dummy = list(tibble(x = NA_real_, y = NA_real_)), .[6:length(.)])}
       cols <- c(col2(pals = 'batlow'), grey(seq_along(te) /(length(te) +1)))
     }
