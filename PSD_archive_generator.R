@@ -1088,9 +1088,9 @@ getXYlines. <- function(d, cook = T, conv = T, n = 200, ...) {  # 'cook' := boos
 }
 
 
-## Cumulative conversion of PSD curve == (2021-03-16) ========================
+## Cumulative conversion of PSD curve == (2021-08-30) ========================
 getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext means extention of every lines to min-max
-  dL <- getXYlines.(d, cook, conv, n) %>% map(function(nya) nya %>% mutate(y = cumP.(y)))
+  dL <- getXYlines.(d, cook, conv, n) %>% map(., cdf.)
   if (ext == TRUE) {
     ran <- dL %>% map(function(nya) range(nya[1], na.rm = T)) %>% unlist %>% range
     dL <- dL %>% map(function(nya) {
@@ -1172,31 +1172,31 @@ fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
 }
 
 
-## Swing for loop for mixing ratio == (2021-08-10) ========================
+## Swing for loop for mixing ratio == (2021-08-29) ========================
 swing4_ratio. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
   for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
-    if (stepW == 0.1) tenta <- c(0, 1)  # Starters for mixing ratio in the loop range
-    Ratio <- tenta %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
+    if (stepW == 0.1) tmp <- c(0, 1)  # Starters for mixing ratio in the loop range
+    Ratio <- tmp %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
     Rss <- rep(NA_real_, length(Ratio))
     for (i in seq_along(Ratio)) {  # Compare not y but area due to different number of points between ref & composit
       iMix_part <- tibble(x = xy1$x, y = Ratio[i] *xy1$y +(1 -Ratio[i]) *xy2$y) %>% .[com_xrange, ]  # xy1$x = xy2$x is the common x
-      Rss[i] <- {area.(xy0[ref_xrange, ]) -area.(iMix_part)} %>% {sum(. ^2)}  # determined by local fitting from peak to D95
+      Rss[i] <- {area.(xy0[ref_xrange, ]) -area.(iMix_part)} ^2  # determined by local fitting from peak to D95
     }
-    tenta <- interval2.(Rss, valley = T) %>% Ratio[.]
-    if (length(tenta) == 1) break
+    tmp <- interval2.(Rss, valley = T) %>% Ratio[.]
+    if (length(tmp) == 1) break
   }
-  final_ratio <- mean(tenta) %>% {c(., 1 -., 0)}
+  final_ratio <- mean(tmp) %>% {c(., 1 -., 0)} %>% set_names(LETTERS[1:3])
   return(final_ratio)
 }
 
 
-## Swing for loop for mixing ratio == (2021-08-09) ========================
+## Swing for loop for mixing ratio == (2021-08-30) ========================
 swing4_norm2section. <- function(d, ...) {
   ## Seak the intersection between the raw PSD & the normal
   ## NOTE: Both peaks are the same. The question is how to determine the sd of the norm
   x <- d$x; y <- d$y
   peak_x <- x[which.max(y)]
-  Dcal90 <- whichNear.(vec = cumP.(y), ref = 0.90) %>% x[.]
+  Dcal90 <- cdf.(d, p = 0.90)
   for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
     if (stepW == 0.1) tenta <- c(0.1, delta.(x))
     q_sd <- tenta %>% {seq(.[1], .[2], by = stepW)}    #  Make the range narrow gradually
@@ -1219,21 +1219,53 @@ swing4_norm2section. <- function(d, ...) {
 }
 
 
-## Residual Sum of Square: local optimization for right tail == (2021-08-14) ========================
+## 3 paramters ratio == (2021-09-01) ========================
+ratio3. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
+  f <- function(par) {
+    al <- par[1]
+    be <- par[2]
+    ga <- par[3]
+    tmp <- tibble(x = xy1$x, y = al *xy1$y +be *xy2$y +ga *{xy3$y %||% 0})
+
+    target_area <- area.(xy0[ref_xrange, ])
+  # target_cap <- sum(xy0$y[(which.max(xy0$y) -15) : (which.max(xy0$y) +15)])  # area.(xy0[(which.max(xy0$y)-15) : (which.max(xy0$y)+15), ])
+    target_d50 <- cdf.(xy0, p = 0.5)
+
+    i_area <- area.(tmp[com_xrange, ])
+  # i_cap <- sum(tmp$y[(which.max(tmp$y) -15) : (which.max(tmp$y) +15)]) # area.(tmp[(which.max(tmp$y) -15) : (which.max(tmp$y) +15), ])
+    i_d50 <- cdf.(tmp, p = 0.5)
+
+    ## the last term makes the sum of ratio ~ 1. the evel term, (target_cap -i_cap) ^2, makes a right shift of the peak like 0% --> 5%
+    out <- (target_area -i_area) ^2 +(target_d50 -i_d50) ^2 +(1 -area.(tmp)) ^2
+    return(out)
+  }
+  ## (1,0,0)(al,be,ga)>=0, (0,1,0)(al,be,ga)>=0, (0,0,1)(al,be,ga)>=0, (-1,-1,-1)(al,be,ga)>=-1
+  tmp <- constrOptim(c(0.33, 0.33, 0.33), f, grad = NULL, ui = rbind(c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(-1, -1, -1)), ci = c(0, 0, 0, -1))
+  ratio <- tmp$par %>% set_names(LETTERS[1:3])
+# sum(ratio); print(ratio)
+  return(ratio)
+}
+
+
+## Residual Sum of Square: local optimization for right tail == (2021-08-30) ========================
 rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam data but estimated p(θ|x)                                                                                                                                                                                                                                  
   ## Marking x as index of fitting
-  percentileX <- function(per) whichNear.(vec = cumP.(xy0$y), ref = per) %>% xy0$x[.]
+  percentileX <- cdf.(xy0, p = c(0.1, 0.95, 0.99))
   peak_x <- xy0$x[which.max(xy0$y)]  # Near; percentileX(0.37)                                                  
-  PERT_x <- (percentileX(0.1) +percentileX(0.99) +4 *peak_x) /6
+  PERT_x <- (percentileX[1] +percentileX[3] +4 *peak_x) /6
   norm_x <- swing4_norm2section.(xy0)
 
   
   ## Concerned x range to make the criteria of the goodness of fitting
-  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}
-  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
+  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX[2])) %>% {.[1] : .[2]}
+  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX[2])) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
 
   ## Mixing ratio determined by local fitting from peak to D95
-  mixRatio <- swing4_ratio.(ref_xrange, com_xrange, xy0, xy1, xy2, xy3)
+  if (is.null(xy3)) {
+    mixRatio <- swing4_ratio.(ref_xrange, com_xrange, xy0, xy1, xy2, xy3)
+  } else {
+    mixRatio <- ratio3.(ref_xrange, com_xrange, xy0, xy1, xy2, xy3)
+  }
   xy123 <- tibble(x = xy1$x, y = mixRatio[1] *xy1$y +mixRatio[2] *xy2$y +mixRatio[3] *(xy3$y %||% 0))
 
   ## Mismatch evaluation
@@ -1244,10 +1276,10 @@ rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam dat
 }
 
 
-## Vital point on the PSD == (2020-01-23) ========================
+## Vital point on the PSD == (2021-08-30) ========================
 vital_psd. <- function(dt_psd, ...) {
   def.(c('x', 'y'), list(dt_psd[[1]], dt_psd[[2]]))
-  d1_999 <- whichNear.(cumP.(y), c(0.001, 0.999)) %>% x[.]
+  d1_999 <- cdf.(dt_psd, p = c(0.001, 0.999))
   peak_x <- x[which.max(y)]
   ## Seak the intersection between the raw PSD & the normal whose peak is agreed with the raw PSD
   for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {

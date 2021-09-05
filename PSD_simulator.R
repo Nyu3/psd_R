@@ -3,7 +3,7 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2021-08-18) ========================
+## Excel reader for sevral sheets == (2021-08-30) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
   d <- getData.(filetype = '粒度調整') %>% tidyPSD.  # 'xls|xlsx|粒度調整'
@@ -13,7 +13,7 @@ getPSD <- function(...) {
                             gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|Master', 'master', .) %>%
                             gsub('基材1|基材A|基材a', 'A', .) %>% gsub('基材2|基材B|基材b', 'B', .) %>% gsub('基材3|基材C|基材c', 'C', .) %>%
                             gsub('検証|Test|TEST', 'test', .)
-    )
+       )
 
   ## Warning shortage
   cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) dplyr::filter(d, sheet == x) %>% nrow())  # table(d$sheet) is not good
@@ -42,7 +42,7 @@ getPSD <- function(...) {
 
     ## Watch out for Microtrac D50!! D50 order are "gam_freq < raw_freq < peak(gam_dens) < Mictrotrac D50 < raw_dens < gam_dens"
     d50_microtrac <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['stack']] %>% .[[1]] %>% pull(value, stack) %>% .['D50']  # Microtrac
-  # d50_gam_dens <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[whichNear.(cumP0.(.), 0.5),  'x']]}
+  # d50_gam_dens <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% cdf.(., p = 0.5)
   # d50_gam_peak <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[which.max(.$y),  'x']]}
     d50_gam_min <- d %>% dplyr::filter(sheet == 'ideal') %>% .[['gam_dens']] %>% .[[1]] %>% {.[[1,  'x']]}
     d50 <- d50_microtrac
@@ -67,8 +67,9 @@ getPSD <- function(...) {
     ## Rename
     d <- d %>% mutate(sheet = gsub('ideal', 'target', sheet), d50 = num)
   } else if (cnt['master'] > 0) {  # When you have ideal & master sheets, the master is given the priority
+    d <- d %>% dplyr::filter(sheet != 'ideal') %>% chooseRow('master', 'マスターサンプル')
     d50_master <- d %>% pull(stack, sheet) %>% .$master %>% dplyr::filter(stack == 'D50') %>% .[['value']]
-    d <- d %>% chooseRow('master', 'マスターサンプル') %>% mutate(sheet = gsub('master', 'target', sheet), d50 = d50_master)  # choose & rename
+    d <- d %>% mutate(sheet = gsub('master', 'target', sheet), d50 = d50_master)  # choose & rename
   }
 
   ## Choose the action to simulate / testify
@@ -85,7 +86,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2021-08-18) ========================
+## Estimator == (2021-09-05) ========================
 tunePSD <- function(...) {
   query_lib.('scico')
   ## Preparation
@@ -111,7 +112,7 @@ tunePSD <- function(...) {
     xy0 <- ta[[1]]
     xy1 <- fast_model.(pa[[i]], x123)  # Needed to calculate model p(X|θ) with raw(x,y) and put common x123 into the formula,
     xy2 <- fast_model.(pb[[j]], x123)  # then find a mixture part
-    xy3 <- fast_model.(pc[[k]], x123)
+    xy3 <- fast_model.(pc[[k]], x123)  # map(list(xy0,xy1,xy2,xy3), ~.$x %>% range)
 
     ## Calculation for the mixing ratio
     fit <- rssFit.(xy0, xy1, xy2, xy3)  # return --> ratio, peak_mismatch, tail_mismatch
@@ -178,7 +179,11 @@ tunePSD <- function(...) {
   save2.(grN)
 
   ## Plot: target, A, B, (C), estimation, (test)
-  col2 <- function(pals) scico::scico(5 +length(pc[[1]]), palette = pals) %>% {.[1:(4 +length(pc[[1]]))]} %>% {c(., .[length(.)])}
+  col2 <- function(pals) {
+    scico::scico(5 +length(pc[[1]]), palette = pals) %>%
+    .[1:(4 +ifelse(is.null(pc[[1]]), 0, 1))] %>%
+    {c(., .[length(.)])}
+  }
   ltys <- c(1,2,3, if (is.null(pc[[1]])) NULL else 4, 1, 0, if (is.null(te[[1]])) NULL else rep(1, length(te)))  # the 0 for \n (peak error ...
   for (i in seq(nrow(calc))) {
     ## the lty 0 "\n (peak error ...)" vanishes test data line, so it needs to have a dummy-xy set when drawing test data
