@@ -135,7 +135,7 @@ tunePSD <- function(...) {
                str_c(text_a, text_b, text_c),
                text_eval,
                text_test
-              )
+             )
 
     calc <- tibble(
       配合 = str_c(names(pa[i]), names(pb[j]), names(pc[k]), sep = ' * '),
