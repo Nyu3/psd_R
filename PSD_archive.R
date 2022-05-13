@@ -351,7 +351,7 @@ lazy_def. <- function(model, ...) {
 ## Short cut 4 == (2021-02-09) ========================
 lazy_xy. <- function(f, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension for rawX) which is used in the lazy_call.()
   if (is.null(model)) return(NULL)
-  f_chr <- formals(f) %>% names(.) %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')') %>% str_replace('x', 'anyX')
+  f_chr <- formals(f) %>% names() %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')') %>% str_replace('x', 'anyX')
   lazy_def.(model)
   if (ext == FALSE && deviance(model) > 0.013) {  # bad fitting (which looks parallel to the x-axis): use rawX
     anyX <- rawX
@@ -421,7 +421,7 @@ lazy_xy. <- function(f, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension f
     anyX <- seq(qx_sides[1], qx_sides[2], length = 200)
     anyY <- eval(parse(text = f_chr))
   }
-  dt_mdl <- tibble(x = anyX, y = anyY) %>% clean1.(.)  # If xAny covers out of range, then return NaN; so it should be replaced 0
+  dt_mdl <- tibble(x = anyX, y = anyY) %>% clean1.()  # If xAny covers out of range, then return NaN; so it should be replaced 0
   return(dt_mdl)
 }  # crp.(iris[1:4]) crp.(c(iris[[2]],5.6,4.8,1.6,1.35))
 
@@ -431,7 +431,7 @@ lazy_quantile. <- function(mdl, x, q = 0.999, Fx, qy = F, ...) {
   if (is.null(mdl)) return(NULL)
   lazy_def.(mdl)
   if (is.data.frame(x) && ncol(x) == 2) x <- x[[1]]
-  qua <- eval(parse(text = Fx)) %>% clean0.(.)
+  qua <- eval(parse(text = Fx)) %>% clean0.()
   out <- if (qy == TRUE) tibble(x =x, y = qua) else whichNear.(vec = qua, ref = q) %>% x[.]
   return(out)
 }
