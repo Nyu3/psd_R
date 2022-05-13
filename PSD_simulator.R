@@ -181,7 +181,8 @@ tunePSD <- function(...) {
       }
     }
   }  # END of for
-  calc <- calcs %>% arrange(配合)  # arrange(desc(モデル評価)) %>% rowid_to_column('おすすめ順')  # Sort so as to choose better combinations easily
+  ## Sort so as to choose better combinations easily (character --> naturalsort, value or combination --> arrange)
+  calc <- naturalsort::naturalorder(calcs$配合) %>% calcs[., ]  # arrange(desc(モデル評価)) %>% rowid_to_column('おすすめ順')
 
   ## Making directory
   oldDir <- getwd()
