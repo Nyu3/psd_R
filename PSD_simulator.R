@@ -87,7 +87,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2022-05-12) ========================
+## Estimator == (2022-05-13) ========================
 tunePSD <- function(...) {
   query_lib.('formattable', 'scico')
   ## Preparation
@@ -142,24 +142,24 @@ tunePSD <- function(...) {
 
     calc <- tibble(
       配合 = str_c(names(pa[i]), names(pb[j]), names(pc[k]), sep = ' * '),
-      モデル評価 = sprintf('%.2f', -log(abs(fit$peak_mismatch)) *1 -log(abs(fit$tail_mismatch)) *0.3),
+      モデル評価 = sprintf('%.2f', -log(abs(fit$peak_mismatch)) *1 -log(abs(fit$tail_mismatch)) *0.5),
       ピーク誤差率 = fit$peak_mismatch,
       'テール(D80-D97.5)面積誤差' = fit$tail_mismatch,
-      配合率A = formattable::percent(fit$ratio[1], 2),
-      配合率B = formattable::percent(fit$ratio[2], 2),
-      配合率C = fit$ratio[3] %>% {ifelse(. == 0, NA_real_, formattable::percent(., 2))},
-      タグA = nm[names(pa[i])],
-      タグB = nm[names(pb[j])],
-      タグC = names(pc[k]) %>% {ifelse(is.null(.), NA_real_, nm[.])},
-      薬さじA = round(fit$spatula[1], 4),
-      '薬さじA+B' = round(cumsum(fit$spatula)[2], 4),
-      '薬さじA+B+C' = fit$spatula[3] %>% {ifelse(. == 0, NA_real_, round(cumsum(fit$spatula)[3], 4))},
       SampleID2 = str_c(bo[names(pa[i])], '+', bo[names(pb[j])],
                     if (fit$ratio[3] == 0) NULL else str_c('+', bo[names[pc[k]]])
                   ),
       備考 = str_c(formattable::percent(fit$ratio[1], 2), ':', formattable::percent(fit$ratio[2], 2),
               if (fit$ratio[3] == 0) NULL else str_c(':', formattable::percent(fit$ratio[3], 2))
             ),
+      配合率A = formattable::percent(fit$ratio[1], 2),  # you cannot output this style to xlsx, ie, converted to dicimal style
+      配合率B = formattable::percent(fit$ratio[2], 2),
+      配合率C = fit$ratio[3] %>% {ifelse(. == 0, NA_real_, formattable::percent(., 2))},
+      薬さじA = round(fit$spatula[1], 4),
+      '薬さじA+B' = round(cumsum(fit$spatula)[2], 4),
+      '薬さじA+B+C' = fit$spatula[3] %>% {ifelse(. == 0, NA_real_, round(cumsum(fit$spatula)[3], 4))},
+      タグA = nm[names(pa[i])],
+      タグB = nm[names(pb[j])],
+      タグC = names(pc[k]) %>% {ifelse(is.null(.), NA_real_, nm[.])},
       dL = list(dL), legeN = list(legeN)
     )
     calcs <- if (i *j *k == 1) calc else bind_rows(calcs, calc)
