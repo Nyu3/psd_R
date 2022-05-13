@@ -1172,7 +1172,28 @@ fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
 }
 
 
-## Swing for loop for mixing ratio == (2021-08-29) ========================
+
+
+## Swing for-loop for spatula weight == (2022-05-13) ========================
+swing4_spatula_weight. <- function(fit_ratio, ...) {
+  ## Seak better total weight between 0.0405 ~ 0.0415 mg
+  fit_ratio2 <- fit_ratio /fit_ratio[1]
+  for (stepW in c(0.01, 0.001)) {
+    if (stepW == 0.01) tmp <- c(0, 0.05)  # Starters for A weight
+    weight <- tmp %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
+    Rss <- rep(NA_real_, length(weight))
+    for (i in seq_along(weight)) {
+      Rss[i] <- {sum(fit_ratio2 *weight[i]) -mean(c(0.0405, 0.0415))} ^2
+    }
+    tmp <- interval2.(Rss, valley = T) %>% weight[.]  # whichNear.(Rss, 0, value = T)
+    if (length(tmp) == 1) break
+  }
+  final_weight <- mean(tmp) *fit_ratio2
+  return(final_weight)
+}
+
+
+## Swing for-loop for mixing ratio == (2021-08-29) ========================
 swing4_ratio. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
   for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
     if (stepW == 0.1) tmp <- c(0, 1)  # Starters for mixing ratio in the loop range
@@ -1190,7 +1211,7 @@ swing4_ratio. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
 }
 
 
-## Swing for loop for mixing ratio == (2021-08-30) ========================
+## Swing for-loop for mixing ratio == (2021-08-30) ========================
 swing4_norm2section. <- function(d, ...) {
   ## Seak the intersection between the raw PSD & the normal
   ## NOTE: Both peaks are the same. The question is how to determine the sd of the norm
@@ -1247,18 +1268,19 @@ ratio3. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
 }
 
 
-## Residual Sum of Square: local optimization for right tail == (2021-08-30) ========================
+## Residual Sum of Square: local optimization for right tail == (2022-05-12) ========================
 rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam data but estimated p(θ|x)                                                                                                                                                                                                                                  
   ## Marking x as index of fitting
-  percentileX <- cdf.(xy0, p = c(0.1, 0.95, 0.99))
-  peak_x <- xy0$x[which.max(xy0$y)]  # Near; percentileX(0.37)                                                  
-  PERT_x <- (percentileX[1] +percentileX[3] +4 *peak_x) /6
-  norm_x <- swing4_norm2section.(xy0)
+  percentileX <- function(percent) cdf.(xy0, p = percent)
+  peak_x <- xy0$x[which.max(xy0$y)]  # Near; peak_x ~ percentileX(0.35)                                                  
+# PERT_x <- (percentileX(0.1) +percentileX(0.99) +4 *peak_x) /6
+# norm_x <- swing4_norm2section.(xy0)
 
-  
   ## Concerned x range to make the criteria of the goodness of fitting
-  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX[2])) %>% {.[1] : .[2]}
-  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX[2])) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
+  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}  # ref = c(percentileX(0.80), percentileX(0.975))
+  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
+  ref_xrange2 <- whichNear.(vec = xy0$x, ref = c(percentileX(0.80), percentileX(0.975))) %>% {.[1] : .[2]}  # for local mismatch 
+  com_xrange2 <- whichNear.(vec = xy1$x, ref = c(percentileX(0.80), percentileX(0.975))) %>% {.[1] : .[2]}
 
   ## Mixing ratio determined by local fitting from peak to D95
   if (is.null(xy3)) {
@@ -1270,7 +1292,7 @@ rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam dat
 
   ## Mismatch evaluation
   index1 <- xy123$x[which.max(xy123$y)] %>% {. /peak_x -1}  # 1st index is the peak mismatch, oriented to mixed PSD accuracy
-  index2 <- area.(xy123[com_xrange, ]) /area.(xy0[ref_xrange, ]) -1  # 2nd is the local area mismatch, oriented to slicing capability
+  index2 <- area.(xy123[com_xrange2, ]) -area.(xy0[ref_xrange2, ])  # 2nd is the local area mismatch, oriented to slicing capability
 
   return(list(ratio = mixRatio, peak_mismatch = index1, tail_mismatch = index2))
 }

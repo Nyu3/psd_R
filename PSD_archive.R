@@ -333,7 +333,7 @@ lazy_call. <- function(x, y, pLL, f, ext = F, y1 = 0, y2 = 0, ...) {
   query_lib.('minpack.lm')
   if (is.data.frame(x) && ncol(x) == 2) def.(c('x', 'y'), list(x[[1]], x[[2]]))
   mL <- list()
-  fun_quasi <- formals(f) %>% names(.) %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')')  # args(f)
+  fun_quasi <- formals(f) %>% names() %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')')  # args(f)
   for (i in seq_along(pLL)) mL[[i]] <- tryReturn.(minpack.lm::nlsLM(y ~ eval(parse(text = fun_quasi)), start = pLL[[i]]))
   mdl <- best_mdl.(mL)
   dev <- dev.(mdl)

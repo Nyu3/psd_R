@@ -3,17 +3,18 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2021-08-30) ========================
+## Excel reader for sevral sheets == (2022-05-12) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
-  d <- getData.(filetype = '粒度調整') %>% tidyPSD.  # 'xls|xlsx|粒度調整'
+  d <- getData.(filetype = '粒度調整') %>% tidyPSD.()  # 'xls|xlsx|粒度調整'
 
   ## Rename data type and count them
   d <- d %>% mutate(sheet = sheet %>%
                             gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|Master', 'master', .) %>%
                             gsub('基材1|基材A|基材a', 'A', .) %>% gsub('基材2|基材B|基材b', 'B', .) %>% gsub('基材3|基材C|基材c', 'C', .) %>%
-                            gsub('検証|Test|TEST', 'test', .)
-       )
+                            gsub('検証|Test|TEST', 'test', .),
+                    bottle = str_split(tag, '\\) ') %>% map_chr(~ .[2])
+       ) %>% relocate(bottle, .after = tag)
 
   ## Warning shortage
   cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) dplyr::filter(d, sheet == x) %>% nrow())  # table(d$sheet) is not good
@@ -86,13 +87,14 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2021-09-05) ========================
+## Estimator == (2022-05-12) ========================
 tunePSD <- function(...) {
-  query_lib.('scico')
+  query_lib.('formattable', 'scico')
   ## Preparation
   d <- getPSD()
   nm <- d %>% pull(tag, sheet)
-  if (str_detect(d$sheet, 'test') %>% any) {  # test info: tag << remark (ex. A12.3% : B87.7%)
+  bo <- d %>% pull(bottle, sheet)
+  if (str_detect(d$sheet, 'test') %>% any()) {  # test info: tag << remark (ex. A12.3% : B87.7%)
     lege_tag_test <- d %>% pull(tag, sheet) %>% {.[str_detect(names(.), 'test')]}
     lege_remark_test <- d %>% pull(tag, sheet) %>% {.[str_detect(names(.), 'test')]}
     nm[str_detect(names(nm), 'test')] <-  # if no comment in the remark as NA, replace'em tothe tag name
@@ -101,22 +103,23 @@ tunePSD <- function(...) {
   ta <- d %>% pull(gam_dens, sheet) %>% {set_names(list(.$target), 'target')}
   pa <- d %>% dplyr::filter(str_detect(sheet, 'A')) %>% {set_names(.[['gam_dens']], .$sheet)}
   pb <- d %>% dplyr::filter(str_detect(sheet, 'B')) %>% {set_names(.[['gam_dens']], .$sheet)}
-  pc <- d %>% dplyr::filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
-  te <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
+  pc <- d %>% dplyr::filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) . else list(NULL)}
+  te <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>% {if (length(.) != 0) . else list(NULL)}
   mx <- list()
 
   ## Calculation
   for (i in seq_along(pa)) for (j in seq_along(pb)) for (k in seq_along(pc)) {
     ctr <- if (i * j * k == 1) 1 else ctr +1
-    x123 <- c(pa[[i]]$x, pb[[j]]$x, pc[[k]]$x) %>% unique %>% sort
+    x123 <- c(pa[[i]]$x, pb[[j]]$x, pc[[k]]$x) %>% unique() %>% sort()
     xy0 <- ta[[1]]
     xy1 <- fast_model.(pa[[i]], x123)  # Needed to calculate model p(X|θ) with raw(x,y) and put common x123 into the formula,
     xy2 <- fast_model.(pb[[j]], x123)  # then find a mixture part
     xy3 <- fast_model.(pc[[k]], x123)  # map(list(xy0,xy1,xy2,xy3), ~.$x %>% range)
 
     ## Calculation for the mixing ratio
-    fit <- rssFit.(xy0, xy1, xy2, xy3)  # return --> ratio, peak_mismatch, tail_mismatch
-    mx <- tibble(x = xy1$x, y = fit$ratio[1] *xy1$y +fit$ratio[2] *xy2$y +fit$ratio[3] *(xy3$y %||% 0)) %>% list %>%
+    fit <- rssFit.(xy0, xy1, xy2, xy3) %>%  # return --> ratio, peak_mismatch, tail_mismatch
+           {c(., list(spatula = swing4_spatula_weight.(.$ratio)))}  # plus, calculation of spatula weight
+    mx <- tibble(x = xy1$x, y = fit$ratio[1] *xy1$y +fit$ratio[2] *xy2$y +fit$ratio[3] *(xy3$y %||% 0)) %>% list() %>%
           set_names(if (length(pa) *length(pb) *length(pc) == 1) 'mix' else str_c('mix', ctr)) %>% c(mx, .)
     dL <- c(ta, pa[i], pb[j], pc[k], mx[ctr], te)
 
@@ -128,7 +131,7 @@ tunePSD <- function(...) {
     text_test <- if (is.null(te[[1]])) NULL else {
                    if (length(te) == 1) str_c('検証: ', nm[names(te)]) else str_c('検証', seq_along(te), ': ', nm[names(te)])
                  }
-    legeN <- c(str_c('Target:  D50 = ', sprintf('%.1f', unique(d$d50)), ' um'),
+    legeN <- c(str_c('Target:  D50 = ', sprintf('%.2f', unique(d$d50)), ' um'),
                str_c(names(pa[i]), ':  ', nm[names(pa[i])]),
                str_c(names(pb[j]), ':  ', nm[names(pb[j])]),
                if (is.null(pc[[k]])) NULL else str_c(names(pc[k]), ': ', nm[names(pc[k])]),
@@ -140,9 +143,23 @@ tunePSD <- function(...) {
     calc <- tibble(
       配合 = str_c(names(pa[i]), names(pb[j]), names(pc[k]), sep = ' * '),
       モデル評価 = sprintf('%.2f', -log(abs(fit$peak_mismatch)) *1 -log(abs(fit$tail_mismatch)) *0.3),
-      ピーク誤差率 = fit$peak_mismatch, 'テール(peak-D95)面積の誤差率' = fit$tail_mismatch,
-      配合率A = fit$ratio[1], 配合率B = fit$ratio[2], 配合率C = fit$ratio[3] %>% ifelse(. == 0, NA_real_, .),
-      タグA = nm[names(pa[i])], タグB = nm[names(pb[j])], タグC = names(pc[k]) %>% {ifelse(is.null(.), NA_real_, nm[.])},
+      ピーク誤差率 = fit$peak_mismatch,
+      'テール(D80-D97.5)面積誤差' = fit$tail_mismatch,
+      配合率A = formattable::percent(fit$ratio[1], 2),
+      配合率B = formattable::percent(fit$ratio[2], 2),
+      配合率C = fit$ratio[3] %>% {ifelse(. == 0, NA_real_, formattable::percent(., 2))},
+      タグA = nm[names(pa[i])],
+      タグB = nm[names(pb[j])],
+      タグC = names(pc[k]) %>% {ifelse(is.null(.), NA_real_, nm[.])},
+      薬さじA = round(fit$spatula[1], 4),
+      '薬さじA+B' = round(cumsum(fit$spatula)[2], 4),
+      '薬さじA+B+C' = fit$spatula[3] %>% {ifelse(. == 0, NA_real_, round(cumsum(fit$spatula)[3], 4))},
+      SampleID2 = str_c(bo[names(pa[i])], '+', bo[names(pb[j])],
+                    if (fit$ratio[3] == 0) NULL else str_c('+', bo[names[pc[k]]])
+                  ),
+      備考 = str_c(formattable::percent(fit$ratio[1], 2), ':', formattable::percent(fit$ratio[2], 2),
+              if (fit$ratio[3] == 0) NULL else str_c(':', formattable::percent(fit$ratio[3], 2))
+            ),
       dL = list(dL), legeN = list(legeN)
     )
     calcs <- if (i *j *k == 1) calc else bind_rows(calcs, calc)
@@ -164,7 +181,7 @@ tunePSD <- function(...) {
       }
     }
   }  # END of for
-  calc <- calcs %>% arrange(desc(モデル評価))  # %>% rowid_to_column('おすすめ順')  # Sort so as to choose better combinations easily
+  calc <- calcs %>% arrange(配合)  # arrange(desc(モデル評価)) %>% rowid_to_column('おすすめ順')  # Sort so as to choose better combinations easily
 
   ## Making directory
   oldDir <- getwd()
