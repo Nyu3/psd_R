@@ -1268,7 +1268,7 @@ ratio3. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
 }
 
 
-## Residual Sum of Square: local optimization for right tail == (2022-05-12) ========================
+## Residual Sum of Square: local optimization for right tail == (2022-05-13) ========================
 rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam data but estimated p(θ|x)                                                                                                                                                                                                                                  
   ## Marking x as index of fitting
   percentileX <- function(percent) cdf.(xy0, p = percent)
@@ -1277,8 +1277,8 @@ rssFit. <- function(xy0, xy1, xy2, xy3, ...) {  # xy1,2,3 are not raw or gam dat
 # norm_x <- swing4_norm2section.(xy0)
 
   ## Concerned x range to make the criteria of the goodness of fitting
-  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}  # ref = c(percentileX(0.80), percentileX(0.975))
-  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX(0.95))) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
+  ref_xrange <- whichNear.(vec = xy0$x, ref = c(peak_x, percentileX(0.975))) %>% {.[1] : .[2]}  # ref = c(peak_x, percentileX(0.95))
+  com_xrange <- whichNear.(vec = xy1$x, ref = c(peak_x, percentileX(0.975))) %>% {.[1] : .[2]}  # xy1$x = xy2$x is the common x
   ref_xrange2 <- whichNear.(vec = xy0$x, ref = c(percentileX(0.80), percentileX(0.975))) %>% {.[1] : .[2]}  # for local mismatch 
   com_xrange2 <- whichNear.(vec = xy1$x, ref = c(percentileX(0.80), percentileX(0.975))) %>% {.[1] : .[2]}
 
