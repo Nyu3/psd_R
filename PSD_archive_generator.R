@@ -1069,7 +1069,7 @@ freq2dens. <- function(d, ...) {
 ## xy-coordinate of PSD curve from Microtrac data == (2021-02-12) ========================
 getXYlines. <- function(d, cook = T, conv = T, n = 200, ...) {  # 'cook' := boost data number, 'conv' := converting from freq to dens
   ## x channel and y frequency of PSD data
-  Xch <- str_subset(names(d), pattern = 'class') %>% parse_number(.)
+  Xch <- str_subset(names(d), pattern = 'class') %>% parse_number()
   Ypsd <- select(d, starts_with('class'))
 
   ## slice y data at every row and transform PSD with interpolation
@@ -1130,7 +1130,7 @@ tidyPSD. <- function(d, ...) {
   for (i in seq(nrow(d_stack))) stackL[[i]] <- tibble(stack = stacks, value = unlist(d_stack[i, ]))
 
   ## make x channel and y frequency of PSD data into list
-  Xch <- str_subset(names(d), pattern = 'class') %>% parse_number(.)
+  Xch <- str_subset(names(d), pattern = 'class') %>% parse_number()
   Ypsd <- select(d, starts_with('class'))
   xyL <- list()
   for (i in seq(nrow(Ypsd))) xyL[[i]] <- tibble(x = Xch, y = unlist(Ypsd[i, ]))
@@ -1170,8 +1170,6 @@ fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
   qXY <- lazy_xy.(mdl_best$formula, mdl_best$model, xAny, ext = T)
   return(qXY)
 }
-
-
 
 
 ## Swing for-loop for spatula weight == (2022-05-13) ========================
