@@ -87,7 +87,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2022-05-13) ========================
+## Estimator == (2022-06-22) ========================
 tunePSD <- function(...) {
   query_lib.('formattable', 'scico')
   ## Preparation
@@ -146,7 +146,7 @@ tunePSD <- function(...) {
       ピーク誤差率 = fit$peak_mismatch,
       'テール(D80-D97.5)面積誤差' = fit$tail_mismatch,
       SampleID2 = str_c(bo[names(pa[i])], '+', bo[names(pb[j])],
-                    if (fit$ratio[3] == 0) NULL else str_c('+', bo[names[pc[k]]])
+                    if (fit$ratio[3] == 0) NULL else str_c('+', bo[names(pc[k])])
                   ),
       備考 = str_c(formattable::percent(fit$ratio[1], 2), ':', formattable::percent(fit$ratio[2], 2),
               if (fit$ratio[3] == 0) NULL else str_c(':', formattable::percent(fit$ratio[3], 2))
@@ -160,7 +160,8 @@ tunePSD <- function(...) {
       タグA = nm[names(pa[i])],
       タグB = nm[names(pb[j])],
       タグC = names(pc[k]) %>% {ifelse(is.null(.), NA_real_, nm[.])},
-      dL = list(dL), legeN = list(legeN)
+      dL = list(dL),
+      legeN = list(legeN)
     )
     calcs <- if (i *j *k == 1) calc else bind_rows(calcs, calc)
 
