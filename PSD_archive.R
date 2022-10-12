@@ -348,7 +348,7 @@ lazy_def. <- function(model, ...) {
   for (i in seq_along(tenta)) assign(names(tenta)[i], tenta[i], envir = globalenv())  # def.() is just a local assignment
 }
 
-## Short cut 4 == (2021-02-09) ========================
+## Short cut 4 == (2022-10-12) ========================
 lazy_xy. <- function(f, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension for rawX) which is used in the lazy_call.()
   if (is.null(model)) return(NULL)
   f_chr <- formals(f) %>% names() %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')') %>% str_replace('x', 'anyX')
@@ -418,7 +418,7 @@ lazy_xy. <- function(f, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension f
       }
     }
 
-    anyX <- seq(qx_sides[1], qx_sides[2], length = 200)
+    anyX <- seq(qx_sides[1], qx_sides[2], length = 500)  # 200
     anyY <- eval(parse(text = f_chr))
   }
   dt_mdl <- tibble(x = anyX, y = anyY) %>% clean1.()  # If xAny covers out of range, then return NaN; so it should be replaced 0
