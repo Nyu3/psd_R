@@ -1,16 +1,16 @@
 ## ٩(´ᗜ`)و (´-`) .｡oO (PSD simulator only available for the data of Microtrac MT3300EXII, 2018-12-11)
-# source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive.R'), chdir = F)
-# source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
+# source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R/tuningPSD', 'PSD_archive.R'), chdir = F)
+# source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2022-05-12) ========================
+## Excel reader for sevral sheets == (2023-01-26) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
   d <- getData.(filetype = '粒度調整') %>% tidyPSD.()  # 'xls|xlsx|粒度調整'
 
   ## Rename data type and count them
   d <- d %>% mutate(sheet = sheet %>%
-                            gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|Master', 'master', .) %>%
+                            gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|マスタ-|Master', 'master', .) %>%
                             gsub('基材1|基材A|基材a', 'A', .) %>% gsub('基材2|基材B|基材b', 'B', .) %>% gsub('基材3|基材C|基材c', 'C', .) %>%
                             gsub('検証|Test|TEST', 'test', .),
                     bottle = str_split(tag, '\\) ') %>% map_chr(~ .[2])
@@ -89,7 +89,7 @@ getPSD <- function(...) {
 
 ## Estimator == (2022-06-22) ========================
 tunePSD <- function(...) {
-  query_lib.('formattable', 'scico')
+  query_lib.(formattable, scico)
   ## Preparation
   d <- getPSD()
   nm <- d %>% pull(tag, sheet)
