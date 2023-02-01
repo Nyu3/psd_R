@@ -1111,7 +1111,7 @@ getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext 
 
 ## Correct a PSD label and make a nested data == (2021-09-14) ========================
 tidyPSD. <- function(d, ...) {
-  query_lib.(c('hablar', 'tidyr'))
+  query_lib.(hablar, tidyr)
   if (str_detect(names(d), '砥粒種|粒度|ロット番号|備考|測定日時', negate = T) %>% all) stop('Microtrac粒度分布エクセルが見つかりません．\n\n', call. = F)
   tenta <- d$粒度 %>% gsub('月', '-', .) %>% gsub('日', '', .) %>% gsub('2001/2/3', '1/2-3', .)
   tf <- skipMess.(ymd(tenta)) %>% {!is.na(.)}
@@ -1344,7 +1344,7 @@ demo_any_model_plot <- function(...) {
 
 ## Any model estimation for several data == (2021-08-17) ========================
 demo_any_model_ranking <- function(arxiv_sel, ...) {
-  query_lib.('beepr')
+  query_lib.(beepr)
   psd2 <- getData.(path = '~/Library/Mobile Documents/com~apple~CloudDocs/R_script/tuningPSD/test4newPDF.xlsx')$sample
   obj_names <- pmap_chr(psd2[1:2], ~ str_flatten(c(...), collapse = '::'))
   tenta <- rep(NA_real_, nrow(psd2)) %>% set_names(obj_names) %>% bind_rows() %>% .[rep(1, length(arxiv_sel[['name']])), ]
