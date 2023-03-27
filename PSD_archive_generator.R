@@ -1172,21 +1172,25 @@ fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
 }
 
 
-## Swing for-loop for spatula weight == (2022-05-13) ========================
+## Swing for-loop for spatula weight == (2023-03-27) ========================
 swing4_spatula_weight. <- function(fit_ratio, ...) {
   ## Seak better total weight between 0.0405 ~ 0.0415 mg
-  fit_ratio2 <- fit_ratio /fit_ratio[1]
-  for (stepW in c(0.01, 0.001)) {
-    if (stepW == 0.01) tmp <- c(0, 0.05)  # Starters for A weight
-    weight <- tmp %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
-    Rss <- rep(NA_real_, length(weight))
-    for (i in seq_along(weight)) {
-      Rss[i] <- {sum(fit_ratio2 *weight[i]) -mean(c(0.0405, 0.0415))} ^2
+  if (fit_ratio[1] != 0) {  # if (A,B,C) = (0,1,0), it'll fail
+    fit_ratio2 <- fit_ratio /fit_ratio[1]
+    for (stepW in c(0.01, 0.001)) {
+      if (stepW == 0.01) tmp <- c(0, 0.05)  # Starters for A weight
+      weight <- tmp %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
+      Rss <- rep(NA_real_, length(weight))
+      for (i in seq_along(weight)) {
+        Rss[i] <- {sum(fit_ratio2 *weight[i]) -mean(c(0.0405, 0.0415))} ^2
+      }
+      tmp <- interval2.(Rss, valley = T) %>% weight[.]  # whichNear.(Rss, 0, value = T)
+      if (length(tmp) == 1) break
     }
-    tmp <- interval2.(Rss, valley = T) %>% weight[.]  # whichNear.(Rss, 0, value = T)
-    if (length(tmp) == 1) break
+    final_weight <- mean(tmp) *fit_ratio2
+  } else {
+    final_weight <- fit_ratio * 0.041
   }
-  final_weight <- mean(tmp) *fit_ratio2
   return(final_weight)
 }
 
