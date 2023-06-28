@@ -87,7 +87,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2022-06-22) ========================
+## Estimator == (2023-03-03) ========================
 tunePSD <- function(...) {
   query_lib.(formattable, scico)
   ## Preparation
@@ -221,7 +221,7 @@ tunePSD <- function(...) {
   te2 <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
   tbl2 <- c(ta, pa, pb, pc, mx, te2) %>% {.[!sapply(., is.null)]} %>%
           map2(., names(.), ~ .x[1:2] %>% set_names(str_c(.y, c('.x', '.y')))) %>% list2tibble.
-  write3.(list(result = tbl1, xy = tbl2), name = grN)
+  write2.(list(result = tbl1, xy = tbl2), name = grN)
 
   setwd(oldDir); cat('\n    ... Estimation completed.\n\n')
 }
