@@ -1109,19 +1109,28 @@ getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext 
 }  # d %>% getCumLines.(., ext = T) %>% plt.(., xlab = 'Particle Size (μm)', ylab = 'Cumulative Density', ylim = c(0, NA), legePos = c(0.8, 0.3), name = c('A-1', 'A-2'))
 
 
-## Correct a PSD label and make a nested data == (2021-09-14) ========================
+## Correct a PSD label and make a nested data == (2023-09-06) ========================
 tidyPSD. <- function(d, ...) {
   query_lib.(hablar, tidyr)
-  if (str_detect(names(d), '砥粒種|粒度|ロット番号|備考|測定日時', negate = T) %>% all) stop('Microtrac粒度分布エクセルが見つかりません．\n\n', call. = F)
-  tenta <- d$粒度 %>% gsub('月', '-', .) %>% gsub('日', '', .) %>% gsub('2001/2/3', '1/2-3', .)
-  tf <- skipMess.(ymd(tenta)) %>% {!is.na(.)}
-  tenta[tf] <- tenta[tf] %>% str_sub(., 6, 10) %>% gsub('/', '-', .)  # 2021/6/12 --> '6/12' --> '6-12'
+  if (str_detect(names(d), '砥粒種|粒度|ロット番号|備考|測定日時', negate = T) %>% all()) stop('Microtrac粒度分布エクセルが見つかりません．\n\n', call. = F)
+  tmp <- d$粒度 %>%
+         gsub('月', '-', .) %>%
+         gsub('日', '', .) %>%
+         gsub('2001/2/3', '1/2-3', .)
+  tf <- skipMess.(ymd(tmp)) %>% {!is.na(.)}
+  tmp[tf] <- tmp[tf] %>%
+             str_sub(., 6, 10) %>%
+             gsub('/', '-', .)  # 2021/6/12 --> '6/12' --> '6-12'
 
-  d <- d %>% mutate(粒度 = tenta) %>%
+  d <- d %>%
+       mutate(粒度 = tmp) %>%
        rename(type := 砥粒種, grade := 粒度, lot := ロット番号, time := 測定日時) %>% {
          if ('備考' %in% names(d)) rename(., remark := 備考) else mutate(., remark := NA_character_) %>% relocate(remark, .after = lot)
        }
-  d <- d %>% unite(type:grade, sep = ' (', col = tag, na.rm = T) %>% unite(tag:lot, sep = ') ', col = tag, na.rm = T) %>% hablar::retype()
+  d <- d %>%
+       unite(type:grade, sep = ' (', col = tag, na.rm = T) %>%
+       unite(tag:lot, sep = ') ', col = tag, na.rm = T) %>%
+       hablar::retype()
 
   ## make basic stack data into list
   stacks <- c('体積平均径', '個数平均径', '面積平均径m2/cm3', '比表面積', '標準偏差', 'D5', 'D10', 'D25', 'D50', 'D75', 'D90', 'D95', 'D99', 'D99.9', 'D100')
@@ -1135,16 +1144,23 @@ tidyPSD. <- function(d, ...) {
   xyL <- list()
   for (i in seq(nrow(Ypsd))) xyL[[i]] <- tibble(x = Xch, y = unlist(Ypsd[i, ]))
   xyL0 <- map(xyL, function(dxy) {
-            not0 <- which(dxy$y != 0)  # y signals
-            sta <- first(not0) %>% {if (. == 1) 1 else . -1}  # leave two 0 on the both sides in y signals
-            end <- last(not0) %>% {if (. == nrow(dxy)) nrow(dxy) else . +1}
-            return(dxy[sta:end, ])
-          })
-  xyL1 <- map(xyL0, ~ gamXY.(x = .$x, y = .$y, boost = T, n.boost = 150) %>% as_tibble)  # 150 ch interpolated is very suited (between 100 - 200)
+                     not0 <- which(dxy$y != 0)  # y signals
+                     sta <- first(not0) %>% {if (. == 1) 1 else . -1}  # leave two 0 on the both sides in y signals
+                     end <- last(not0) %>% {if (. == nrow(dxy)) nrow(dxy) else . +1}
+                     return(dxy[sta:end, ])
+                   }
+          )
+  xyL1 <- map(xyL0, ~ gamXY.(., n.boost = 150, y0over = T))  # 150 ch interpolated is very suited (between 100 - 200)
 
   ## create nested data
-  out <- d %>% select(!contains(c(stacks, 'class'))) %>%
-         mutate(stack = stackL, raw_freq = xyL0, raw_dens = map(xyL0, freq2dens.), gam_freq = xyL1, gam_dens = map(xyL1, freq2dens.))
+  out <- d %>%
+         select(!contains(c(stacks, 'class'))) %>%
+         mutate(stack = stackL,
+                raw_freq = xyL0,
+                raw_dens = map(xyL0, freq2dens.),
+                gam_freq = xyL1,
+                gam_dens = map(xyL1, freq2dens.)
+         )
   return(out)
 }
 
@@ -1172,14 +1188,14 @@ fast_model. <- function(d, xAny, ...) {  # PDF = f(x|θ) --> arYiv. = f(θ|xAny)
 }
 
 
-## Swing for-loop for spatula weight == (2023-03-27) ========================
+## Swing for-loop for spatula weight == (2023-09-07) ========================
 swing4_spatula_weight. <- function(fit_ratio, ...) {
   ## Seak better total weight between 0.0405 ~ 0.0415 mg
   if (fit_ratio[1] != 0) {  # if (A,B,C) = (0,1,0), it'll fail
     fit_ratio2 <- fit_ratio /fit_ratio[1]
+    tmp <- c(0, 0.05)  # Starters for A weight
     for (stepW in c(0.01, 0.001)) {
-      if (stepW == 0.01) tmp <- c(0, 0.05)  # Starters for A weight
-      weight <- tmp %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
+      weight <- seq(tmp[1], tmp[2], by = stepW)  # Make the range narrow gradually
       Rss <- rep(NA_real_, length(weight))
       for (i in seq_along(weight)) {
         Rss[i] <- {sum(fit_ratio2 *weight[i]) -mean(c(0.0405, 0.0415))} ^2
@@ -1195,17 +1211,17 @@ swing4_spatula_weight. <- function(fit_ratio, ...) {
 }
 
 
-## Swing for-loop for mixing ratio == (2021-08-29) ========================
+## Swing for-loop for mixing ratio == (2023-09-07) ========================
 swing4_ratio. <- function(ref_xrange, com_xrange, xy0, xy1, xy2, xy3, ...) {
-  for (stepW in c(0.1, 0.01, 1e-04, 1e-05)) {
-    if (stepW == 0.1) tmp <- c(0, 1)  # Starters for mixing ratio in the loop range
-    Ratio <- tmp %>% {seq(.[1], .[2], by = stepW)}  # Make the range narrow gradually
+  tmp <- c(0, 1)  # Starters for mixing ratio in the loop range
+  for (stepW in c(1e-01, 1e-02, 1e-04, 1e-05)) {
+    Ratio <- seq(tmp[1], tmp[2], by = stepW)  # Make the range narrow gradually
     Rss <- rep(NA_real_, length(Ratio))
     for (i in seq_along(Ratio)) {  # Compare not y but area due to different number of points between ref & composit
       iMix_part <- tibble(x = xy1$x, y = Ratio[i] *xy1$y +(1 -Ratio[i]) *xy2$y) %>% .[com_xrange, ]  # xy1$x = xy2$x is the common x
       Rss[i] <- {area.(xy0[ref_xrange, ]) -area.(iMix_part)} ^2  # determined by local fitting from peak to D95
     }
-    tmp <- interval2.(Rss, valley = T) %>% Ratio[.]
+    tmp <- interval2.(Rss, valley = T) %>% Ratio[.]  # plt.(tibble(Ratio, Rss))
     if (length(tmp) == 1) break
   }
   final_ratio <- mean(tmp) %>% {c(., 1 -., 0)} %>% set_names(LETTERS[1:3])

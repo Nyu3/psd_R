@@ -3,18 +3,24 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2023-01-26) ========================
+## Excel reader for sevral sheets == (2023-09-06) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
   d <- getData.(filetype = '粒度調整') %>% tidyPSD.()  # 'xls|xlsx|粒度調整'
 
   ## Rename data type and count them
-  d <- d %>% mutate(sheet = sheet %>%
-                            gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>% gsub('マスター|マスタ-|Master', 'master', .) %>%
-                            gsub('基材1|基材A|基材a', 'A', .) %>% gsub('基材2|基材B|基材b', 'B', .) %>% gsub('基材3|基材C|基材c', 'C', .) %>%
-                            gsub('検証|Test|TEST', 'test', .),
-                    bottle = str_split(tag, '\\) ') %>% map_chr(~ .[2])
-       ) %>% relocate(bottle, .after = tag)
+  d <- d %>%
+       mutate(sheet = sheet %>%
+                      gsub('理想|理想分布|理想分布形状|Ideal', 'ideal', .) %>%
+                      gsub('マスター|マスタ-|Master', 'master', .) %>%
+                      gsub('基材1|基材A|基材a', 'A', .) %>%
+                      gsub('基材2|基材B|基材b', 'B', .) %>%
+                      gsub('基材3|基材C|基材c', 'C', .) %>%
+                      gsub('検証|Test|TEST', 'test', .),
+                      bottle = str_split(tag, '\\) ') %>%
+                      map_chr(~ .[2])
+       ) %>%
+       relocate(bottle, .after = tag)
 
   ## Warning shortage
   cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) dplyr::filter(d, sheet == x) %>% nrow())  # table(d$sheet) is not good
@@ -25,7 +31,9 @@ getPSD <- function(...) {
   ## Take a concerned row
   chooseRow <- function(.d, concern, mess = NULL, one = T) {
     if (str_detect(.d$sheet, concern) %>% any) {
-      row_tag <- .d %>% dplyr::filter(sheet == concern) %>% .$tag %>% {
+      row_tag <- .d %>%
+                 dplyr::filter(sheet == concern) %>%
+                 .$tag %>% {
                    if (one == TRUE) {
                      choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T, fulltext = T)
                    } else {
@@ -61,10 +69,10 @@ getPSD <- function(...) {
     cat(str_dup('=', times = 38), '\n')
     ## Shift PSD by (num -d50)
     row_ideal <- which(d$sheet == 'ideal')
-    d[row_ideal, 'raw_dens'] <- d[row_ideal, 'raw_dens'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble
-    d[row_ideal, 'raw_freq'] <- d[row_ideal, 'raw_freq'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble
-    d[row_ideal, 'gam_dens'] <- d[row_ideal, 'gam_dens'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble
-    d[row_ideal, 'gam_freq'] <- d[row_ideal, 'gam_freq'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble
+    d[row_ideal, 'raw_dens'] <- d[row_ideal, 'raw_dens'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble()
+    d[row_ideal, 'raw_freq'] <- d[row_ideal, 'raw_freq'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble()
+    d[row_ideal, 'gam_dens'] <- d[row_ideal, 'gam_dens'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble()
+    d[row_ideal, 'gam_freq'] <- d[row_ideal, 'gam_freq'] %>% .[[1]] %>% map(~ mutate(., x = x +(num -d50))) %>% tibble()
     ## Rename
     d <- d %>% mutate(sheet = gsub('ideal', 'target', sheet), d50 = num)
   } else if (cnt['master'] > 0) {  # When you have ideal & master sheets, the master is given the priority
@@ -87,20 +95,20 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2023-03-03) ========================
+## Estimator == (2023-09-06) ========================
 tunePSD <- function(...) {
   query_lib.(formattable, scico)
   ## Preparation
   d <- getPSD()
-  nm <- d %>% pull(tag, sheet)
-  bo <- d %>% pull(bottle, sheet)
+  nm <- d %>% pull(tag, name = sheet)
+  bo <- d %>% pull(bottle, name = sheet)
   if (str_detect(d$sheet, 'test') %>% any()) {  # test info: tag << remark (ex. A12.3% : B87.7%)
     lege_tag_test <- d %>% pull(tag, sheet) %>% {.[str_detect(names(.), 'test')]}
     lege_remark_test <- d %>% pull(tag, sheet) %>% {.[str_detect(names(.), 'test')]}
     nm[str_detect(names(nm), 'test')] <-  # if no comment in the remark as NA, replace'em tothe tag name
       map2_chr(lege_remark_test, lege_tag_test, ~ replace_na(.x, replace = .y))
   }
-  ta <- d %>% pull(gam_dens, sheet) %>% {set_names(list(.$target), 'target')}
+  ta <- d %>% pull(gam_dens, name = sheet) %>% {set_names(list(.$target), 'target')}
   pa <- d %>% dplyr::filter(str_detect(sheet, 'A')) %>% {set_names(.[['gam_dens']], .$sheet)}
   pb <- d %>% dplyr::filter(str_detect(sheet, 'B')) %>% {set_names(.[['gam_dens']], .$sheet)}
   pc <- d %>% dplyr::filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) . else list(NULL)}
