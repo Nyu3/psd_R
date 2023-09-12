@@ -9,7 +9,7 @@
 ## https://threeplusone.com/pubs/FieldGuide.pdf
 
 
-## Parameter archive == (2020-02-08) ================================================================================================
+## Parameter archive == (2023-07-18) ================================================================================================
 ## biWeight bhp cauchy epa gumbel halfCauchy Half-normal hohlfeld hyperSecan invExp invGauss invHalfNorm invRay laha laplace levy
 ## logGenHalfNorm logHalfNormGeo logis logLaplace logNorm meri moyal norm rayleigh recInvGauss relBrWi rice triWeight uniPrime (arcsine)
 pLL_nu_lam <- list( list(nu=0.1,lam=1), list(nu=1,lam=10), list(nu=0.1,lam=10), list(nu=10,lam=1), list(nu=10,lam=10), list(nu=0,lam=10),
@@ -22,7 +22,8 @@ pLL_nu_lam <- list( list(nu=0.1,lam=1), list(nu=1,lam=10), list(nu=0.1,lam=10), 
 ## (gammaLogNorm)
 pLL_nu_lam_al <- list( list(nu=0.01,lam=1,al=1), list(nu=0.01,lam=100,al=1), list(nu=0.01,lam=100,al=1), list(nu=0.1,lam=1000,al=1),
                        list(nu=1,lam=10,al=1), list(nu=1,lam=10,al=0.1), list(nu=0.1,lam=0.1,al=0.1), list(nu=0.1,lam=1,al=1),
-                       list(nu=1,lam=1,al=1), list(nu=10,lam=1,al=10), list(nu=10,lam=10,al=1),list(nu=10,lam=10,al=0.01) )
+                       list(nu=1,lam=1,al=1), list(nu=10,lam=1,al=10), list(nu=10,lam=10,al=1), list(nu=10,lam=10,al=0.01),
+                       list(nu=1,lam=-3,al=10) )
 
 ## amoroso anoGenTransNorm baldNicho beta betaCau betaExp betaGum betaHypeSecant betaLogNorm betaLogWei betaLogis betaMoy betaNaka
 ## betaNorm betaPrime champer expGauss4 expGenGum expWei genBurr genPear7 genTransNorm genWei gumbel1 gumbel2 halfGenPear7 halphen jsu
@@ -314,7 +315,7 @@ stcum <- function(x) 1/2 *(1 +erfc(x /sqrt(2)))  # standard cumulative distribut
 ## https://rdrr.io/cran/pracma/man/gammainc.html
 ## lower: 0-x, upper: x-Inf, regular: incgamma(lower) /gamma(x,a)
 incgamma <- function(x, a, lower_upper_regular = 1) {
-  query_lib.('pracma')
+  query_lib.(pracma)
   if (lower_upper_regular != 3) {
     map_dbl(x, ~ pracma::gammainc(., a)[lower_upper_regular])
   } else {  # If you want regular inc.gamma, this method is faster
@@ -328,18 +329,21 @@ incbeta <- function(x, a, b) pbeta(x, a, b) /beta(a, b)
 ## Short cut 1 == (2020-10-31) ========================
 best_mdl. <- function(mL) map_dbl(mL, ~ {if (!anyNA(.)) deviance(.) else NA}) %>% which.min() %>% {if (length(.) == 0) NULL else mL[[.]]}
 
+
 ## Short cut 2 == (2021-03-23) ========================
 lazy_call. <- function(x, y, pLL, f, ext = F, y1 = 0, y2 = 0, ...) {
-  query_lib.('minpack.lm')
+  query_lib.(minpack.lm)
   if (is.data.frame(x) && ncol(x) == 2) def.(c('x', 'y'), list(x[[1]], x[[2]]))
   mL <- list()
   fun_quasi <- formals(f) %>% names() %>% str_flatten(collapse = ',') %>% str_c('f(', ., ')')  # args(f)
   for (i in seq_along(pLL)) mL[[i]] <- tryReturn.(minpack.lm::nlsLM(y ~ eval(parse(text = fun_quasi)), start = pLL[[i]]))
+# for (i in seq_along(pLL)) mL[[i]] <- tryReturn.(gslnls::gsl_nls(y~eval(parse(text=fun_quasi)), data=map_df(d,as.double), start=pLL[[i]]))
   mdl <- best_mdl.(mL)
   dev <- dev.(mdl)
   dt_mdl <- lazy_xy.(f, mdl, x, ext, y1, y2)
   return(list(model = mdl, deviance = dev, formula = f, xy = dt_mdl))
 }
+
 
 ## Short cut 3 == (2020-11-10) ========================
 lazy_def. <- function(model, ...) {
@@ -347,6 +351,7 @@ lazy_def. <- function(model, ...) {
   tenta <- coef(model)
   for (i in seq_along(tenta)) assign(names(tenta)[i], tenta[i], envir = globalenv())  # def.() is just a local assignment
 }
+
 
 ## Short cut 4 == (2022-10-12) ========================
 lazy_xy. <- function(f, model, rawX, ext, y1 = 0, y2 = 0, ...) {  # ext(ension for rawX) which is used in the lazy_call.()
@@ -2332,8 +2337,9 @@ dagum2F. <- function(x, y = NULL, ext = F, ...) {
 ## Davis distribution == (2020-01-04) ==
 ## https://en.wikipedia.org/wiki/Davis_distribution
 davisF. <- function(x, y = NULL, ext = F, ...) {  # Note: used Riemann zeta function;  income sizes
+  query_lib.(VGAM)
   pLL <- pLL_nu_lam_al
-  f <- function(x,nu,lam,al) 1 /gamma(al) /'VGAM'::zeta(al) /lam *((x -nu) /lam) ^(-al -1) *(exp(((x -nu) /lam) ^(-1)) -1) ^(-1)
+  f <- function(x,nu,lam,al) 1 /gamma(al) /VGAM::zeta(al) /lam *((x -nu) /lam) ^(-al -1) *(exp(((x -nu) /lam) ^(-1)) -1) ^(-1)
   lazy_call.(x,y,pLL,f,ext)
 }
 
