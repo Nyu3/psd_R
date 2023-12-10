@@ -95,7 +95,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2023-09-06) ========================
+## Estimator == (2023-12-10) ========================
 tunePSD <- function(...) {
   query_lib.(formattable, scico)
   ## Preparation
@@ -211,11 +211,13 @@ tunePSD <- function(...) {
     .[1:(4 +ifelse(is.null(pc[[1]]), 0, 1))] %>%
     {c(., .[length(.)])}
   }
-  ltys <- c(1,2,3, if (is.null(pc[[1]])) NULL else 4, 1, 0, if (is.null(te[[1]])) NULL else rep(1, length(te)))  # the 0 for \n (peak error ...
+  ltys <- c(1,2,3, if (is.null(pc[[1]])) NULL else 4,
+            1, 0, if (is.null(te[[1]])) NULL else rep(1, length(te)))  # the 0 for \n (peak error ...
+
   for (i in seq(nrow(calc))) {
     ## the lty 0 "\n (peak error ...)" vanishes test data line, so it needs to have a dummy-xy set when drawing test data
     if (is.null(te[[1]])) {  # simulate
-      di <- calc$dL[[i]]
+      di <- calc$dL[[i]] %>% {if (is.null(pc[[1]])) .[-4] else .}  # skip C in case of A&B mixing
       cols <- c('turku', 'tokyo', 'acton', 'oslo', 'bamako')[n_cyc.(i, 5)] %>% col2(.)
     } else {  # testify; target, A, B, (C), mix, dummy, test1, ...
       di <- calc$dL[[i]] %>% {c(.[1:5], dummy = list(tibble(x = NA_real_, y = NA_real_)), .[6:length(.)])}
