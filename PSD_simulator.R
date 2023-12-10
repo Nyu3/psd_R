@@ -95,7 +95,7 @@ getPSD <- function(...) {
 }
 
 
-## Estimator == (2023-12-10) ========================
+## Estimator == (2023-12-11) ========================
 tunePSD <- function(...) {
   query_lib.(formattable, scico)
   ## Preparation
@@ -111,8 +111,10 @@ tunePSD <- function(...) {
   ta <- d %>% pull(gam_dens, name = sheet) %>% {set_names(list(.$target), 'target')}
   pa <- d %>% dplyr::filter(str_detect(sheet, 'A')) %>% {set_names(.[['gam_dens']], .$sheet)}
   pb <- d %>% dplyr::filter(str_detect(sheet, 'B')) %>% {set_names(.[['gam_dens']], .$sheet)}
-  pc <- d %>% dplyr::filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) . else list(NULL)}
-  te <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>% {if (length(.) != 0) . else list(NULL)}
+  pc <- d %>% dplyr::filter(str_detect(sheet, 'C')) %>% {set_names(.[['gam_dens']], .$sheet)} %>%
+        {if (length(.) != 0) . else list(NULL)}
+  te <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>%
+        {if (length(.) != 0) . else list(NULL)}
   mx <- list()
 
   ## Calculation
@@ -127,18 +129,22 @@ tunePSD <- function(...) {
     ## Calculation for the mixing ratio
     fit <- rssFit.(xy0, xy1, xy2, xy3) %>%  # return --> ratio, peak_mismatch, tail_mismatch
            {c(., list(spatula = swing4_spatula_weight.(.$ratio)))}  # plus, calculation of spatula weight
-    mx <- tibble(x = xy1$x, y = fit$ratio[1] *xy1$y +fit$ratio[2] *xy2$y +fit$ratio[3] *(xy3$y %||% 0)) %>% list() %>%
-          set_names(if (length(pa) *length(pb) *length(pc) == 1) 'mix' else str_c('mix', ctr)) %>% c(mx, .)
+    mx <- tibble(x = xy1$x, y = fit$ratio[1] *xy1$y +fit$ratio[2] *xy2$y +fit$ratio[3] *(xy3$y %||% 0)) %>%
+          list() %>%
+          set_names(if (length(pa) * length(pb) * length(pc) == 1) 'mix' else
+                    str_c('mix', names(pa[i]), '*', names(pb[j]), if (is.null(pc[[k]])) NULL else str_c('*', names(pc[k])))) %>%
+          c(mx, .)
     dL <- c(ta, pa[i], pb[j], pc[k], mx[ctr], te)
 
     ## Legend data
     text_a <- str_c('数値予測:  (', names(pa[i]), ') ', sprintf('%.2f', fit$ratio[1] *100), '%,  (')
     text_b <- str_c(names(pb[j]), ') ', sprintf('%.2f', fit$ratio[2] *100), '%')
-    text_c <- if (is.null(pc[[k]])) NULL else str_c(',  ', names(pc[k]), ') ', sprintf('%.2f', fit$ratio[3] *100), '%')
+    text_c <- if (is.null(pc[[k]])) NULL else
+              str_c(',  ', names(pc[k]), ') ', sprintf('%.2f', fit$ratio[3] *100), '%')
     text_eval <- str_c('(ピーク誤差 ', sprintf('%.2f', fit$peak_mismatch *100), '%,  テール誤差 ', sprintf('%.2f', fit$tail_mismatch *100), '%)')
-    text_test <- if (is.null(te[[1]])) NULL else {
-                   if (length(te) == 1) str_c('検証: ', nm[names(te)]) else str_c('検証', seq_along(te), ': ', nm[names(te)])
-                 }
+    text_test <- if (is.null(te[[1]])) NULL else
+                   if (length(te) == 1) str_c('検証: ', nm[names(te)]) else
+                   str_c('検証', seq_along(te), ': ', nm[names(te)])
     legeN <- c(str_c('Target:  D50 = ', sprintf('%.2f', unique(d$d50)), ' um'),
                str_c(names(pa[i]), ':  ', nm[names(pa[i])]),
                str_c(names(pb[j]), ':  ', nm[names(pb[j])]),
@@ -154,10 +160,10 @@ tunePSD <- function(...) {
       ピーク誤差率 = fit$peak_mismatch,
       'テール(D80-D97.5)面積誤差' = fit$tail_mismatch,
       SampleID2 = str_c(bo[names(pa[i])], '+', bo[names(pb[j])],
-                    if (fit$ratio[3] == 0) NULL else str_c('+', bo[names(pc[k])])
+                        if (fit$ratio[3] == 0) NULL else str_c('+', bo[names(pc[k])])
                   ),
       備考 = str_c(formattable::percent(fit$ratio[1], 2), ':', formattable::percent(fit$ratio[2], 2),
-              if (fit$ratio[3] == 0) NULL else str_c(':', formattable::percent(fit$ratio[3], 2))
+                  if (fit$ratio[3] == 0) NULL else str_c(':', formattable::percent(fit$ratio[3], 2))
             ),
       配合率A = formattable::percent(fit$ratio[1], 2),  # you cannot output this style to xlsx, ie, converted to dicimal style
       配合率B = formattable::percent(fit$ratio[2], 2),
@@ -221,16 +227,25 @@ tunePSD <- function(...) {
       cols <- c('turku', 'tokyo', 'acton', 'oslo', 'bamako')[n_cyc.(i, 5)] %>% col2(.)
     } else {  # testify; target, A, B, (C), mix, dummy, test1, ...
       di <- calc$dL[[i]] %>% {c(.[1:5], dummy = list(tibble(x = NA_real_, y = NA_real_)), .[6:length(.)])}
-      cols <- c(col2(pals = 'batlow'), grey(seq_along(te) /(length(te) +1)))
+      cols <- c(col2(pals = 'batlow'), grey(seq_along(te) / (length(te) +1)))
     }
     plt.(di, ylim = c(0, NA), xlab = 'Particle size (μm)', name = calc$legeN[[i]], col = cols, lty = ltys, PDF = F)
   }
   if (names(dev.cur()) == 'cairo_pdf') dev.off()
+
   ## Excel output
-  tbl1 <- calc %>% select(!c(dL, legeN)) %>% select_if(colSums(is.na(.)) != nrow(.))
-  te2 <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['gam_dens']], .$sheet)} %>% {if (length(.) != 0) .  else list(NULL)}
-  tbl2 <- c(ta, pa, pb, pc, mx, te2) %>% {.[!sapply(., is.null)]} %>%
-          map2(., names(.), ~ .x[1:2] %>% set_names(str_c(.y, c('.x', '.y')))) %>% list2tibble.
+  tbl1 <- calc %>%
+          select(!c(dL, legeN)) %>%
+          select_if(colSums(is.na(.)) != nrow(.)) %>%
+          arrange(desc(モデル評価))
+  te2 <- d %>%
+         dplyr::filter(str_detect(sheet, 'test')) %>%
+         {set_names(.[['gam_dens']], .$sheet)} %>%
+         {if (length(.) != 0) . else list(NULL)}
+  tbl2 <- c(ta, pa, pb, pc, mx, te2) %>%
+          .[!sapply(., is.null)] %>%
+          map2(., names(.), ~ .x[1:2] %>% set_names(str_c(.y, c('.x', '.y')))) %>%
+          list2tibble.()
   write2.(list(result = tbl1, xy = tbl2), name = grN)
 
   setwd(oldDir); cat('\n    ... Estimation completed.\n\n')
