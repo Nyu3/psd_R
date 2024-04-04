@@ -1109,7 +1109,7 @@ getCumLines. <- function(d, cook = T, conv = T, n = 200, ext = F, ...) {  # ext 
 }  # d %>% getCumLines.(., ext = T) %>% plt.(., xlab = 'Particle Size (μm)', ylab = 'Cumulative Density', ylim = c(0, NA), legePos = c(0.8, 0.3), name = c('A-1', 'A-2'))
 
 
-## Correct a PSD label and make a nested data == (2023-09-06) ========================
+## Correct a PSD label and make a nested data == (2024-04-04) ========================
 tidyPSD. <- function(d, ...) {
   query_lib.(hablar, tidyr)
   if (str_detect(names(d), '砥粒種|粒度|ロット番号|備考|測定日時', negate = T) %>% all()) stop('Microtrac粒度分布エクセルが見つかりません．\n\n', call. = F)
@@ -1130,6 +1130,7 @@ tidyPSD. <- function(d, ...) {
   d <- d %>%
        unite(type:grade, sep = ' (', col = tag, na.rm = T) %>%
        unite(tag:lot, sep = ') ', col = tag, na.rm = T) %>%
+       unite(tag:ID, sep = ', ID=', col = tag, na.rm = T) %>%
        hablar::retype()
 
   ## make basic stack data into list
