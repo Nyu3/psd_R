@@ -3,7 +3,7 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2023-09-06) ========================
+## Excel reader for sevral sheets == (2024-07-17) ========================
 getPSD <- function(...) {
   ## You cannot add sheet names as data type directly due to non-perfect reliability of them
   d <- getData.(filetype = '粒度調整') %>% tidyPSD.()  # 'xls|xlsx|粒度調整'
@@ -35,9 +35,9 @@ getPSD <- function(...) {
                  dplyr::filter(sheet == concern) %>%
                  .$tag %>% {
                    if (one == TRUE) {
-                     choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T, fulltext = T)
+                     choice.(., str_c(mess, 'をどれか1つ選んで下さい'), one = T)
                    } else {
-                     choice.(., str_c(mess, 'は, 1 2 のようにスペース入れて1つ以上選べます'), one = F, fulltext = T)
+                     choice.(., str_c(mess, 'は, 1 2 のようにスペース入れて1つ以上選べます'), one = F)
                    }
                  }
       .d <- bind_rows(dplyr::filter(.d, tag %in% row_tag), dplyr::filter(.d, sheet != concern))
