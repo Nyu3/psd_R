@@ -3,10 +3,12 @@
 # source(file.path('~/Library/Mobile Documents/com~apple~CloudDocs/R/tuningPSD', 'PSD_archive_generator.R'), chdir = F)
 
 
-## Excel reader for sevral sheets == (2024-07-17) ========================
+## Excel reader for sevral sheets == (2025-06-06) ========================
 getPSD <- function(...) {
     ## You cannot add sheet names as data type directly due to non-perfect reliability of them
-    d <- getData.(filetype = '粒度調整') %>% tidyPSD.()  # 'xls|xlsx|粒度調整'
+    d0 <- getData.(filetype = '粒度調整', filename_return = T)
+    d <- d0$data %>% tidyPSD.()  # 'xls|xlsx|粒度調整'
+
 
     ## Rename data type and count them
     d <- d %>%
@@ -22,15 +24,17 @@ getPSD <- function(...) {
          ) %>%
          relocate(bottle, .after = tag)
 
+
     ## Warning shortage
     cnt <- sapply(c('ideal', 'master', 'A', 'B', 'C', 'test'), function(x) dplyr::filter(d, sheet == x) %>% nrow())  # table(d$sheet) is not good
     if (cnt['A'] == 0) stop('基材 A sheetのデータ数が不足しています．\n\n', call. = F)
     if (cnt['B'] == 0) stop('基材 B sheetのデータ数が不足しています．\n\n', call. = F)
     if (cnt[c('ideal', 'master')] %>% sum == 0) stop('理想分布形状またはマスターsheetのデータ数が不足しています．\n\n', call. = F)
 
+
     ## Take a concerned row
     chooseRow <- function(.d, concern, mess = NULL, one = T) {
-        if (str_detect(.d$sheet, concern) %>% any) {
+        if (str_detect(.d$sheet, concern) %>% any()) {
             row_tag <- .d %>%
                        dplyr::filter(sheet == concern) %>%
                        .$tag %>% {
@@ -44,6 +48,7 @@ getPSD <- function(...) {
         }
         return(.d)
     }
+
 
     ## Choose the target data from (ideal / master)
     if (cnt['ideal'] > 0 && cnt['master'] == 0) {  # When you have only ideal sheet
@@ -81,6 +86,7 @@ getPSD <- function(...) {
         d <- d %>% mutate(sheet = gsub('master', 'target', sheet), d50 = d50_master)  # choose & rename
     }
 
+
     ## Choose the action to simulate / testify
     messages <- if (cnt['test'] > 0) choice.(c('シミュレーション', '検証'), 'どちらの番号を実行しますか', chr = T, one = T) else 'シミュレーション'
     if (messages == 'シミュレーション') out <- d %>% dplyr::filter(sheet != 'test')
@@ -88,10 +94,11 @@ getPSD <- function(...) {
         out <- d %>% chooseRow('A', '基材A') %>% chooseRow('B', '基材B') %>% chooseRow('C', '基材C') %>% chooseRow('test', '検証', one = F)
     }
 
+
     ## Assign the unique name
     make.unique2 <- function(x, sep = '') ave(x, x, FUN = function(a) if (length(a) > 1) str_c(a, 1:length(a), sep = sep) else a)
     out <- out %>% relocate(sheet) %>% arrange(sheet) %>% mutate(sheet = make.unique2(sheet, sep = ''))
-    return(out)
+    return(list(data = out, filename = d0$filename))
 }
 
 
@@ -99,7 +106,9 @@ getPSD <- function(...) {
 tunePSD <- function(...) {
     query_lib.(formattable, scico)
     ## Preparation
-    d <- getPSD()
+    d0 <- getPSD()
+    d <- d0$data
+
     nm <- d %>% pull(tag, name = sheet)
     bo <- d %>% pull(bottle, name = sheet)
     if (str_detect(d$sheet, 'test') %>% any()) {  # test info: tag << remark (ex. A12.3% : B87.7%)
@@ -116,6 +125,7 @@ tunePSD <- function(...) {
     te <- d %>% dplyr::filter(str_detect(sheet, 'test')) %>% {set_names(.[['raw_dens']], .$sheet)} %>%
           {if (length(.) != 0) . else list(NULL)}
     mx <- list()
+
 
     ## Calculation
     for (i in seq_along(pa)) for (j in seq_along(pb)) for (k in seq_along(pc)) {
@@ -202,17 +212,20 @@ tunePSD <- function(...) {
     ## Sort so as to choose better combinations easily (character --> naturalsort, value or combination --> arrange)
     calc <- naturalsort::naturalorder(calcs$配合) %>% calcs[., ]  # arrange(desc(モデル評価)) %>% rowid_to_column('おすすめ順')
 
+
     ## Making directory
     oldDir <- getwd()
     newDir <- str_c(oldDir, '/#graph_data')
     if (!file.exists(newDir)) dir.create('#graph_data')
     setwd(newDir)
 
+
     ## Create graph name
-    fn0 <- str_split(File, '\\.xls|\\.xlsx')[[1]][1] %>% gsub('/|:|<|>|"|\\?|\\*|\\|', '_', .)
+    fn0 <- str_split(d0$filename, '\\.(xls|xlsx)$')[[1]][1] %>% gsub('/|:|<|>|"|\\?|\\*|\\|', '_', .)
     grN <- {if (Sys.info()['sysname'] == 'windows' && !stringi::stri_enc_isutf8(fn0)) iconv(fn0, 'utf8', 'cp932') else fn0} %>%
            gsub('粒度調整', if_else(is.null(te[[1]]), 'シミュ', '検証'), .)
     save2.(grN)
+
 
     ## Plot: target, A, B, (C), estimation, (test)
     col2 <- function(pals) {
@@ -235,6 +248,7 @@ tunePSD <- function(...) {
         plt.(di, ylim = c(0, NA), xlab = 'Particle size (μm)', name = calc$legeN[[i]], col = cols, lty = ltys, PDF = F)
     }
     if (names(dev.cur()) == 'cairo_pdf') dev.off()
+
 
     ## Excel output
     tbl1 <- calc %>%
